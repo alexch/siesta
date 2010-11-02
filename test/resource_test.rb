@@ -22,14 +22,13 @@ module Siesta
 
       it "proxies REST methods over to the controller" do
         begin
-          spy = Spy.new
-          Sandwich.controller = spy
+          Sandwich.controller = Spy.new
           Sandwich.get(99) # read
           Sandwich.post(:meat => "ham") # create
           Sandwich.put(99, :meat => "spam") # update
           Sandwich.delete(99)
           assert do
-            spy.calls == [
+            Sandwich.controller.calls == [
                     [:get, 99],
                     [:post, {:meat => "ham"}],
                     [:put, 99, {:meat => "spam"}],

@@ -6,6 +6,9 @@ task :default => :test
 
 desc 'run all tests (in current ruby)'
 task :test do
+  def separate
+    []
+  end
 #  separate = Dir["./test/adapters/*_test.rb"] + [
 #          "./test/message/test_context_test.rb",
 #          "./test/assert_advanced_test.rb",
@@ -103,7 +106,7 @@ def load_gemspec(gemspec_name)
 end
 
 def gemspecs
-  @gemspecs ||= [load_gemspec("wrong"), load_gemspec("wrong-java")]
+  @gemspecs ||= [load_gemspec("siesta")]
 end
 
 desc "Build pkg/#{gemspecs.first.full_name}.gem"

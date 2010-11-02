@@ -7,6 +7,8 @@ module Siesta
 
 end
 
-require "siesta/controller"
+require "siesta/application"
 require "siesta/resource"
+require "siesta/controller"
+require "siesta/root"
 
