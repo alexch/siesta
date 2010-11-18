@@ -40,5 +40,9 @@ module Siesta
         end
       end
     end
+
+    describe '#be_root' do
+      
+    end
   end
 end

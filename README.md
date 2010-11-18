@@ -13,13 +13,17 @@ Sinatra routes are mere strings, and controllers (or handlers) are blocks define
 
 Siesta allows any object at all -- a Model, a View, or any arbitrary object -- to declare itself a Resource (or subresource). Siesta then automatically routes the correct URL path to it.
 
+Paths are based on the resource's class name, but can be overridden or added.
+
 ## Flexible Layering
 
-The Model, View, Controller architecture has become dogma. Siesta uses an MVC architecture under the hood, but doesn't force app authors to use it explicitly. Instead, write the app you like, and let Siesta fill in the gaps.
+The Model, View, Controller architecture has become dogma. Rails in particular, at least by convention, prefers apps to be medium-sized: more than, say, 20 resources, or less than 5, and Rails causes pain.
 
-If your Resource is a natural Model, then Siesta will use its standard controller to locate the appropriate object/s, instantiate it/them, then locate the appropriate view and render it.
+Siesta uses an MVC architecture under the hood, but doesn't force app authors to use it explicitly. Instead, structure the app how you like, and let Siesta fill in the gaps.
 
-If your Resource is naturally a View (say, an Erector class), then Siesta will use its standard controller to locate its object if necessary, and instantiate and render it. 
+If your Resource is a natural Model (e.g. ActiveRecord), then Siesta will use its standard controller to locate the appropriate object/s, instantiate it/them, then locate the appropriate view and render it.
+
+If your Resource is a natural View (say, an Erector class), then Siesta will use its standard controller to locate its object if necessary, and instantiate and render it. 
 
 If Siesta can't find a view defined for your Resource, then it will use a standard view (similar to ActiveScaffold).
 

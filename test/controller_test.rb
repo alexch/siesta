@@ -1,4 +1,4 @@
-dir = File.expand_path(File.dirname(__FILE__))
+here = File.expand_path(File.dirname(__FILE__))
 require "./test/test_helper"
 require "siesta/resource"
 

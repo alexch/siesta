@@ -1,7 +1,11 @@
 require 'extlib/mash'
+require 'siesta/wait_for'
+require 'siesta/welcome_to_siesta'
 
 module Siesta
   class Application
+    extend WaitFor
+    
     DEFAULT_PORT = 3030
 
     def self.instance
@@ -22,17 +26,27 @@ module Siesta
       launched_server = nil
       t = Thread.new do
         Rack::Handler::Thin.run rack_stack, rack_options do |server|
-          puts "hi"
           launched_server = server
         end
       end
-      while (launched_server.nil?) do
-        # busy polling is lame
+      wait_for { !launched_server.nil? } # busy polling is lame
+      wait_for do
+        begin
+          url = URI.parse("http://127.0.0.1:#{port}/")
+          html = Net::HTTP.get url
+          true
+        rescue Errno::ECONNREFUSED => e
+          false
+        end
       end
+      p launched_server
       launched_server
     end
 
-    attr_accessor :root
+    attr_writer :root
+    def root
+      @root || Siesta::WelcomeToSiesta
+    end
 
     ## A Rack application is an Ruby object (not a class) that responds to +call+...
     def call(env)

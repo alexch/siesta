@@ -1,7 +1,12 @@
-* Rack version
-* Sinatra version
-* Rails version
-* JS version? (1-page app)
+* different plugins
+** Rack version
+** Sinatra version
+** Rails version
+** JS version? (1-page app)
+
+* "new" and "edit" as subresources
+** POST /foo/new -> POST /foo
+** POST /foo/12/edit -> PUT /foo/12
 
 * request type
   * json
@@ -11,12 +16,20 @@
 * "rake routes" script
   - shows the URLs and the Object and file names that implement them
 
+* templates (see Sinatra::Templates)
+    * layout
+    * inline
+    * precompiled
+
+https://github.com/rails/rails/tree/master/activemodel
+
 * return type
   * redirect
   * file (see Sinatra::Helpers::StaticFile, #attachment, #send_file
 
 * subresources
   * POST /thing/99/foo?value=bar same as POST /thing/99?foo=bar
+
 
 * permissions
   * allow(lambda |user|)
@@ -25,10 +38,6 @@
 * cache_control, expires, last_modified
 * session
 * etag
-* templates (see Sinatra::Templates)
-  * layout
-  * inline
-  * precompiled
 * errors
   * x return type
 * HEAD
