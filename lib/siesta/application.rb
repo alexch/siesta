@@ -16,10 +16,6 @@ module Siesta
       @instance ||= new
     end
 
-    def self.instance=(new_instance)
-      @instance = new_instance
-    end
-
     def self.launch(port = DEFAULT_PORT)
       require 'rack'
       require 'rack/showexceptions'
@@ -92,41 +88,21 @@ module Siesta
     # todo: test
     def <<(resource)
       raise "path #{resource.path} already mapped" if resources[resource.path]
+      puts "registering #{resource.path} => #{resource}"
       resources[resource.path] = resource
     end
     
     # todo: test
     def process_request(request, response)
-      if resources.empty?      
-        # todo: call route other than root
-        response.write "<title>#{root.name}</title>"
-
-        response.write <<-HTML
-        <pre>
-          verb=#{verb}
-          path=#{path}
-          params=#{params.inspect}
-        </pre>
-        HTML
-
-        response.write <<-HTML
-        <form method="post">
-          <input type="hidden" name="_method" value="put">
-          <input type="submit" value="put this">
-        </form>
-        HTML
-      
+      # d { request }
+      # d { request.path }
+      resource = resources[request.path]
+      if resource.nil?
+        response.write("#{request.path} not found")
+        # todo: test 
+        # todo: 404 not found
       else
-        # d { request }
-        # d { request.path }
-        resource = resources[request.path]
-        if resource.nil?
-          # todo: test 
-          # todo: 404 not found
-        else
-          widget = resource
-          response.write(widget.new.to_html)
-        end
+        resource.controller.get(request, response)
       end
     end
   end

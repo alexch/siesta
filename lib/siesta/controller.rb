@@ -1,7 +1,12 @@
 module Siesta
   class WidgetController
     def initialize(widget_class)
-      
+      @widget_class = widget_class
+    end
+    
+    def get(request, response)
+      html = @widget_class.new.to_html
+      response.write(html)
     end
   end
   

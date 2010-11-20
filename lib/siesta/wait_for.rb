@@ -1,4 +1,4 @@
-module Wrong
+module Siesta
   module WaitFor
     Context = Struct.new(:message)
 
