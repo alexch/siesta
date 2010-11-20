@@ -1,9 +1,15 @@
 module Siesta
-  class Controller
+  class WidgetController
+    def initialize(widget_class)
+      
+    end
+  end
+  
+  class StorageController
 
     attr_accessor :storage, :last_id
 
-    def initialize
+    def initialize(model_class)
       @storage = {}
       @last_id = 0
     end

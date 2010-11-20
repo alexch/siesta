@@ -14,6 +14,6 @@ require "minitest/unit"
 require "wrong/adapters/minitest"
 
 include Wrong
-require "test/spy"
+require "spy"
 
 MiniTest::Unit.autorun

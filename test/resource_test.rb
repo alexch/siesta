@@ -1,5 +1,5 @@
-dir = File.expand_path(File.dirname(__FILE__))
-require "./test/test_helper"
+here = File.expand_path(File.dirname(__FILE__))
+require "#{here}/../test/test_helper"
 require "siesta/resource"
 
 module Siesta
@@ -38,6 +38,10 @@ module Siesta
         ensure
           Sandwich.controller = nil
         end
+      end
+      
+      it "has a path" do
+        assert { Sandwich.path == "/sandwich" }
       end
     end
 

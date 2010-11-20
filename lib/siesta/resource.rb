@@ -1,10 +1,12 @@
 require "siesta/controller"
+require "siesta/application"
 
 module Siesta
   module Resource
 
     def self.included(in_class)
       in_class.send(:extend, ClassMethods)
+      Siesta::Application.instance << in_class
     end
 
     module ClassMethods
@@ -28,6 +30,10 @@ module Siesta
 
       def delete(id)
         controller.delete(id)
+      end
+      
+      def path
+        "/" + self.name.split('::').last.downcase
       end
     end
 
