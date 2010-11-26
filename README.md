@@ -31,3 +31,11 @@ If your Resource implements Siesta controller methods, then it will call them in
 
 Your Resource can also disable chosen REST methods, either permanently or depending on app state (e.g. the current user).
 
+If your Resource is a natural Command, then the standard controller will invoke its `perform` method in response to a POST or PUT.
+
+# Related Projects
+
+<https://github.com/voxdolo/decent_exposure>
+<https://github.com/jamesgolick/resource_controller>
+<https://github.com/ianwhite/resources_controller>
+
