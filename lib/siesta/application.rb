@@ -76,9 +76,12 @@ module Siesta
 
     def <<(resource)
       path = path_for(resource)
-      raise "Path #{path} already mapped" if @resource_paths[path]
-      log "Registering #{path} => #{resource}"
-      @resource_paths[path] = resource
+      if @resource_paths[path]
+        raise "Path #{path} already mapped" unless @resource_paths[path] == resource
+      else
+        log "Registering #{path} => #{resource}"
+        @resource_paths[path] = resource
+      end
     end
     
     def self.path_for(resource)

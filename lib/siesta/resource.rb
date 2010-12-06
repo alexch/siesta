@@ -9,12 +9,11 @@ module Siesta
     end
 
     module ClassMethods
-      def resource #todo: add "path" and other parameters
+      def resource(special = nil) #todo: add "path" and other parameters
         Siesta::Application.instance << self
-      end
-
-      def root
-        Siesta::Application.instance.root = self
+        if special == :root
+          Siesta::Application.instance.root = self
+        end
       end
 
       def path

@@ -36,15 +36,34 @@ module Siesta
               assert { app.resources.include? Poodle }
               assert { app["/poodle"] == Poodle }
             end
-          end
 
-          describe "#root" do
             it "makes the class the root resource" do
               class Pug < Dog
-                root
+                resource :root
               end
               assert { app.root == Pug }
-              assert("but we didn't register an alternate path") { app["/pug"].nil? }
+              assert { app["/"] == Pug }
+              assert("the main path should work as well") { app["/pug"] == Pug }
+            end
+
+            it "gives an error about duplicate paths" do
+              e = rescuing do
+                module Another
+                  class Dog
+                    include Siesta::Resource
+                  end
+                end
+              end
+              assert { e.message == "Path /dog already mapped" }
+            end
+
+            it "suppresses duplicate path error if it's the same resource" do
+              e = rescuing do
+                class Dog
+                  resource
+                end
+              end
+              assert { e.nil? }
             end
           end
 

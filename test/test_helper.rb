@@ -25,14 +25,11 @@ require "siesta/ext"
 require "siesta/config"
 Siesta::Config.verbose = false
 
-module Fixture
-  class Dog
-  end
-end
-
 def sys(cmd, expected_status = 0)
   start_time = Time.now
+  $stdout.flush
   $stderr.print cmd
+  $stderr.flush
   Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thread|
     # in Ruby 1.8, wait_thread is nil :-( so just pretend the process was successful (status 0)
     exit_status = (wait_thread.value.exitstatus if wait_thread) || 0
@@ -45,6 +42,7 @@ def sys(cmd, expected_status = 0)
   end
 ensure
   $stderr.puts " (#{"%.2f" % (Time.now - start_time)} sec)"
+  $stderr.flush
 end
 
 

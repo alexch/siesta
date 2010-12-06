@@ -1,38 +1,17 @@
-require 'net/http'
-require 'wrong'
-include Wrong
-
 here = File.expand_path(File.dirname(__FILE__))
-$: << here
-
-siesta_lib = "#{here}/../../lib"
-$: << siesta_lib unless $:.include?(siesta_lib)
+require "#{here}/../web_client"
 require "#{here}/joe_blow"
 
-def get(path)
-  path = "/#{path}" unless path =~ /^\//
-  url = URI.parse("http://#{@host}:#{@port}#{path}")
-  puts "GET #{url}"
-  html = Net::HTTP.get url
-end
+WebClient.new do
+  get "/"
+  assert {title == "Joe Blow: Home"}
 
-server = Siesta::Server.launch
-begin
-  @host = "localhost"
-  @port = Siesta::Server::DEFAULT_PORT
+  get "/home"
+  assert {title == "Joe Blow: Home"}
 
-  html = get "/"
-  assert {html =~ /<title>Joe Blow: Home<\/title>/}
+  get "/projects"
+  assert {title == "Joe Blow: Projects"}
 
-  html = get "/home"
-  assert {html =~ /<title>Joe Blow: Home<\/title>/}
-
-  html = get "/projects"
-  assert {html =~ /<title>Joe Blow: Projects<\/title>/}
-
-  html = get "/resume"
-  assert {html =~ /<title>Joe Blow: Resume<\/title>/}
-
-ensure
-  server.stop
+  get "/resume"
+  assert {title == "Joe Blow: Resume"}
 end

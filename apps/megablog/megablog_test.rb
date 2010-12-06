@@ -1,23 +1,11 @@
-require 'net/http'
-require 'wrong'
-include Wrong
-
 here = File.expand_path(File.dirname(__FILE__))
-$: << here
+require "#{here}/../web_client"
+require "#{here}/megablog"
 
-siesta_lib = "#{here}/../../lib"
-$: << siesta_lib unless $:.include?(siesta_lib)
-require './activerecord_app'
+WebClient.new do
+  get "/"
+  assert {title == "Megablog: Home"}
 
-server = Siesta::Application.launch
-begin
-  host = "localhost"
-  port = Siesta::Application::DEFAULT_PORT
-  url = URI.parse("http://127.0.0.1:#{port}/")
-  html = Net::HTTP.get url
-
-  assert {html =~ /<title>Megablog<\/title>/}
-
-ensure
-  server.stop
+  get "/home"
+  assert {title == "Megablog: Home"}
 end
