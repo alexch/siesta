@@ -1,3 +1,3 @@
 require './megablog'
 use Rack::ShowExceptions
-run Siesta::Application.new
+run Siesta::Application.instance

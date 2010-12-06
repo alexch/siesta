@@ -1,48 +1,27 @@
-require 'wrong/d'
 require 'extlib/mash'
-require 'siesta/wait_for'
 
-class Object
-  include Wrong::D
-end
+require 'siesta/config'
+require 'siesta/welcome_page'
+require 'siesta/not_found_page'
 
 module Siesta
   class Application
-    extend WaitFor
-    
-    DEFAULT_PORT = 3030
-
     def self.instance
       @instance ||= new
+    end    
+    
+    def self.instance=(application)
+      @instance = application
+    end    
+    
+    def resources
+      @resource_paths.values
     end
-
-    def self.launch(port = DEFAULT_PORT)
-      require 'rack'
-      require 'rack/showexceptions'
-
-      rack_stack = Rack::ShowExceptions.new(Rack::Lint.new(instance))
-      rack_options = {:Port => port, :daemonize => true}
-
-      launched_server = nil
-      t = Thread.new do
-        Rack::Handler::Thin.run rack_stack, rack_options do |server|
-          launched_server = server
-        end
-      end
-      wait_for { !launched_server.nil? } # busy polling is lame
-      wait_for do
-        begin
-          url = URI.parse("http://127.0.0.1:#{port}/")
-          html = Net::HTTP.get url
-          true
-        rescue Errno::ECONNREFUSED => e
-          false
-        end
-      end
-      puts "Launched #{launched_server.inspect}"
-      launched_server
+    
+    def initialize
+      @resource_paths = {"/" => Siesta::WelcomePage}
     end
-
+    
     ## A Rack application is an Ruby object (not a class) that responds to +call+...
     def call(env)
       request  = Rack::Request.new(env)
@@ -52,7 +31,7 @@ module Siesta
 
       response = Rack::Response.new
 
-      process_request(request, response)
+      handle_request(request, response)
       status, headers, body = response.finish
 
       # Never produce a body on HEAD requests. Do retain the Content-Length
@@ -67,44 +46,62 @@ module Siesta
       ## ...and returns an Array of exactly three values: status, headers, body
       [status, headers, body]
     end
-
+    
     # todo: test
+    def handle_request(request, response)
+      # d { request }
+      # d { request.path }
+      resource = self[request.path]
+      if resource.nil?
+        response.write NotFoundPage.new(:path => request.path).to_html
+        # response.write("#{request.path} not found")
+        response.status = 404
+      else
+        # handler_for(resource).handle(request)
+        response.write resource.new.to_html        
+      end
+    end    
+
     def root=(resource)
-      resources["/"] = resource
+      @resource_paths["/"] = resource
     end
     
     def root
-      resources["/"] || begin
-        require 'siesta/welcome_to_siesta'
-        Siesta::WelcomeToSiesta
-      end
+      self["/"]
+    end
+    
+    def log msg      
+      puts "#{Time.now} - #{msg}" if Siesta::Config.verbose
     end
 
-    # todo: test
-    def resources
-      (@resources ||= {})
-    end
-    
-    # todo: test
     def <<(resource)
-      raise "path #{resource.path} already mapped" if resources[resource.path]
-      puts "registering #{resource.path} => #{resource}"
-      resources[resource.path] = resource
+      path = path_for(resource)
+      raise "Path #{path} already mapped" if @resource_paths[path]
+      log "Registering #{path} => #{resource}"
+      @resource_paths[path] = resource
     end
     
-    # todo: test
-    def process_request(request, response)
-      # d { request }
-      # d { request.path }
-      resource = resources[request.path]
-      if resource.nil?
-        response.write("#{request.path} not found")
-        # todo: test 
-        # todo: 404 not found
+    def self.path_for(resource)
+      if resource.respond_to? :path
+        resource.path
+      elsif resource.is_a? Class
+        "/#{resource.name.split('::').last.underscore}"
+      elsif resource.respond_to? :id
+        "#{path_for(resource.class)}/#{resource.id}"
       else
-        resource.controller.get(request, response)
+        "#{path_for(resource.class)}/#{resource.object_id}"
       end
     end
+    
+    # todo: Is there a cleaner way to proxy this? Maybe use Forwardable.
+    def path_for(resource)
+      Application.path_for(resource)
+    end
+    
+    def [](path)
+      @resource_paths[path]
+    end
+    
   end
 end
 
@@ -112,6 +109,6 @@ if $0 == __FILE__
   require 'rack'
   require 'rack/showexceptions'
   Rack::Handler::Thin.run \
-  Rack::ShowExceptions.new(Rack::Lint.new(Rack::MethodOverride.new(Siesta::Application.new))),
+  Rack::ShowExceptions.new(Rack::Lint.new(Rack::MethodOverride.new(Siesta::Application.instance))),
   :Port => 9292
 end
