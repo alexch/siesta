@@ -4,11 +4,20 @@ require 'erector'
 require 'siesta'
 
 class JoeBlowPage < Erector::Widgets::Page
+  external :style, <<-CSS  
+  body { margin: 0;}
+  .nav { float: left; border: 1px solid black; margin: .5em; padding: 1em; }
+  .main { padding: 0 1em 1em 12em; }
+  .header { border-bottom: 1px solid black; text-align: center; }
+  .footer { clear: both; border-top: 1px solid black; text-align: center; }
+  CSS
+  
   def page_title
     "Joe Blow: #{super}"
   end
   
   def body_content
+    h1 "I Am Joe Blow", :class => "header"
     nav
     main
     footer
@@ -26,16 +35,19 @@ class JoeBlowPage < Erector::Widgets::Page
   
   def footer
     div :class => 'footer' do
-      
+      text "Copyright "
+      rawtext "&copy;"
+      text " 2020. Some rights reserved."
     end
   end
   
 end
 
+###########################################################################
 
 class Home < JoeBlowPage
-  include Siesta::Resource
-  include Siesta::Root
+  include Siesta
+  root
   
   def main
     div :class => 'main' do
@@ -44,8 +56,10 @@ class Home < JoeBlowPage
   end    
 end
 
+###########################################################################
+
 class Projects < JoeBlowPage
-  include Siesta::Resource
+  include Siesta
   
   def main
     div :class => 'main' do
@@ -58,8 +72,10 @@ class Projects < JoeBlowPage
   end    
 end
 
+###########################################################################
+
 class Resume < JoeBlowPage
-  include Siesta::Resource
+  include Siesta
   
   def main
     div :class => 'main' do

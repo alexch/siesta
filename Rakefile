@@ -1,6 +1,7 @@
 require "rubygems"
 require "bundler"
 Bundler.setup
+Bundler.require
 
 task :default => :test
 

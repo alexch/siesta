@@ -12,13 +12,14 @@ require './joe_blow'
 def get(path)
   path = "/#{path}" unless path =~ /^\//
   url = URI.parse("http://#{@host}:#{@port}#{path}")
+  puts "GET #{url}"
   html = Net::HTTP.get url
 end
 
-server = Siesta::Application.launch
+server = Siesta::Server.launch
 begin
   @host = "localhost"
-  @port = Siesta::Application::DEFAULT_PORT
+  @port = Siesta::Server::DEFAULT_PORT
 
   html = get "/"
   assert {html =~ /<title>Joe Blow: Home<\/title>/}

@@ -1,3 +1,6 @@
+* "rake routes" script
+  - shows the URLs and the Object and file names that implement them
+
 * different plugins
 ** Rack version
 ** Sinatra version
@@ -8,20 +11,22 @@
 ** POST /foo/new -> POST /foo
 ** POST /foo/12/edit -> PUT /foo/12
 
-* request type
+* request context, determining return handling (processing, view)
   * json
   * xml
   * xhr?
-
-* "rake routes" script
-  - shows the URLs and the Object and file names that implement them
+  * mobile
+  * iPhone
 
 * templates (see Sinatra::Templates)
     * layout
     * inline
     * precompiled
 
-https://github.com/rails/rails/tree/master/activemodel
+* persistence
+	https://github.com/rails/rails/tree/master/activemodel
+	Hash
+	
 
 * return type
   * redirect
@@ -34,13 +39,14 @@ https://github.com/rails/rails/tree/master/activemodel
 * permissions
   * allow(lambda |user|)
 
+* errors
+  * x return type
+
+
+Sinatra-type goodies:
 * upload file (multipart)
 * cache_control, expires, last_modified
 * session
 * etag
-* errors
-  * x return type
-* HEAD
-* run!
 * serve static files from public directory (see Sinatra::Base#static!)
 * bind to particular hostname/interface
