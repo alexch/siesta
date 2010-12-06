@@ -46,7 +46,7 @@ end
 ###########################################################################
 
 class Home < JoeBlowPage
-  include Siesta
+  include Siesta::Resource
   root
   
   def main
@@ -59,7 +59,7 @@ end
 ###########################################################################
 
 class Projects < JoeBlowPage
-  include Siesta
+  include Siesta::Resource
   
   def main
     div :class => 'main' do
@@ -75,7 +75,7 @@ end
 ###########################################################################
 
 class Resume < JoeBlowPage
-  include Siesta
+  include Siesta::Resource
   
   def main
     div :class => 'main' do

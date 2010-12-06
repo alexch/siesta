@@ -84,7 +84,13 @@ module Siesta
     def self.path_for(resource)
       if resource.respond_to? :path
         resource.path
-      elsif resource.is_a? Class
+      else
+        build_path_for(resource)
+      end
+    end
+
+    def self.build_path_for(resource)
+      if resource.is_a? Class
         "/#{resource.name.split('::').last.underscore}"
       elsif resource.respond_to? :id
         "#{path_for(resource.class)}/#{resource.id}"

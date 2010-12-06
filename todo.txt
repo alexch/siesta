@@ -11,6 +11,10 @@
 ** POST /foo/new -> POST /foo
 ** POST /foo/12/edit -> PUT /foo/12
 
+Current user
+
+Commands
+
 * request context, determining return handling (processing, view)
   * json
   * xml

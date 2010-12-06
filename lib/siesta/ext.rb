@@ -15,3 +15,4 @@ class Hash
     size == 1 && include?(item)
   end
 end
+

@@ -7,7 +7,7 @@ $: << here
 
 siesta_lib = "#{here}/../../lib"
 $: << siesta_lib unless $:.include?(siesta_lib)
-require './joe_blow'
+require "#{here}/joe_blow"
 
 def get(path)
   path = "/#{path}" unless path =~ /^\//

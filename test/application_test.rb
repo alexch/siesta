@@ -10,12 +10,12 @@ module Siesta
     describe "singleton instance" do
       it "can be accessed" do
         assert { not Application.instance.nil? }
-        assert { Application.instance == Application.instance }
+        assert { Application.instance.equal? Application.instance }
       end
 
       it "can be changed" do
         original_instance = Application.instance
-        begin          
+        begin
           new_app = Application.new
           Application.instance = new_app
           assert { Application.instance == new_app }
