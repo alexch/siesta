@@ -20,7 +20,7 @@ module Siesta
         it "can be changed" do
           original_instance = Application.instance
           begin
-            new_app              = Application.new
+            new_app = Application.new
             Application.instance = new_app
             assert { Application.instance == new_app }
           ensure
@@ -123,14 +123,14 @@ module Siesta
       describe '#call' do
         describe "GET" do
           it "for a missing path" do
-            request  = Rack::MockRequest.new(@application)
+            request = Rack::MockRequest.new(@application)
             response = request.get("/nope")
             assert { response.status == 404 }
             assert { response.body == NotFoundPage.new(:path => "/nope").to_html }
           end
 
           it "for an Erector widget with no params" do
-            request  = Rack::MockRequest.new(@application)
+            request = Rack::MockRequest.new(@application)
             response = request.get("/")
             assert { response.status == 200 }
             assert { response.body == WelcomePage.new.to_html }
@@ -139,7 +139,7 @@ module Siesta
 
         describe "HEAD" do
           it "returns a blank body but a valid Content-Length" do
-            request  = Rack::MockRequest.new(@application)
+            request = Rack::MockRequest.new(@application)
             response = request.request("HEAD", "/")
             assert { response.status == 200 }
             assert { response.body == "" }

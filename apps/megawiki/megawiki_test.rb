@@ -11,4 +11,11 @@ WebClient.new do
 
   get "/home"
   assert {title == "Megawiki: Home"}
+
+  post "/article", :name => "Dogs", :body => "Dogs are cute."
+
+  get "/article/1"
+  assert {title == "Megawiki: Dogs"}
+  assert {doc.css(".main .text").text == "Dogs are cute."}
+
 end

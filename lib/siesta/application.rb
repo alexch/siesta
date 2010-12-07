@@ -1,6 +1,9 @@
 require 'extlib/mash'
 
 require 'siesta/config'
+require 'siesta/request'
+require 'siesta/handler'
+
 require 'siesta/welcome_page'
 require 'siesta/not_found_page'
 
@@ -8,69 +11,54 @@ module Siesta
   class Application
     def self.instance
       @instance ||= new
-    end    
-    
+    end
+
     def self.instance=(application)
       @instance = application
-    end    
-    
+    end
+
     def resources
       @resource_paths.values
     end
-    
+
     def initialize
       @resource_paths = {"/" => Siesta::WelcomePage}
     end
-    
+
     ## A Rack application is an Ruby object (not a class) that responds to +call+...
     def call(env)
-      request  = Rack::Request.new(env)
-      verb = request.request_method
-      path = Rack::Utils.unescape(request.path_info)
-      params   = Mash.new(request.params)
-
-      response = Rack::Response.new
-
-      handle_request(request, response)
-      status, headers, body = response.finish
-
-      # Never produce a body on HEAD requests. Do retain the Content-Length
-      # unless it's "0", in which case we assume it was calculated erroneously
-      # for a manual HEAD response and remove it entirely.
-      # (stolen from Sinatra)
-      if env['REQUEST_METHOD'] == 'HEAD'
-        body = []
-        headers.delete('Content-Length') if headers['Content-Length'] == '0'
-      end
-
+      request = Siesta::Request.new(env)
+      handle_request(request)
+      status, headers, body = request.finish
       ## ...and returns an Array of exactly three values: status, headers, body
       [status, headers, body]
     end
-    
+
     # todo: test
-    def handle_request(request, response)
+    def handle_request(request)
       # d { request }
       # d { request.path }
       resource = self[request.path]
       if resource.nil?
-        response.write NotFoundPage.new(:path => request.path).to_html
+        request.response.status = 404
+        # todo: different error body for JSON vs. HTML
+        request.response.write NotFoundPage.new(:path => request.path).to_html
         # response.write("#{request.path} not found")
-        response.status = 404
       else
-        # handler_for(resource).handle(request)
-        response.write resource.new.to_html        
+        request.resource = resource
+        Handler.for(request).handle
       end
-    end    
+    end
 
     def root=(resource)
       @resource_paths["/"] = resource
     end
-    
+
     def root
       self["/"]
     end
-    
-    def log msg      
+
+    def log msg
       puts "#{Time.now} - #{msg}" if Siesta::Config.verbose
     end
 
@@ -83,7 +71,7 @@ module Siesta
         @resource_paths[path] = resource
       end
     end
-    
+
     def self.path_for(resource)
       if resource.respond_to? :path
         resource.path
@@ -101,16 +89,16 @@ module Siesta
         "#{path_for(resource.class)}/#{resource.object_id}"
       end
     end
-    
+
     # todo: Is there a cleaner way to proxy this? Maybe use Forwardable.
     def path_for(resource)
       Application.path_for(resource)
     end
-    
+
     def [](path)
       @resource_paths[path]
     end
-    
+
   end
 end
 

@@ -103,6 +103,16 @@ require 'logger'
 require 'fileutils'
 
 module DB
+  def self.config_for(environment)
+    if ActiveRecord::Base.configurations.empty?
+      dbconfig = YAML.load(File.read('config/database.yml'))
+      ActiveRecord::Base.configurations = dbconfig
+    end
+    config = ActiveRecord::Base.configurations[environment.to_s]
+    raise "Couldn't find database configuration for #{environment}" if config.nil?
+    config
+  end
+
   def self.connect_to(db_environment)
     puts "Connecting to #{db_environment} database"
     FileUtils.mkdir_p("log")
@@ -121,17 +131,6 @@ module DB
       ActiveRecord::Base.connection.decrement_open_transactions
     end
     ActiveRecord::Base.clear_active_connections!
-  end
-
-  def self.config_for(environment)
-    if ActiveRecord::Base.configurations.empty?
-      dbconfig = YAML.load(File.read('config/database.yml'))
-      p dbconfig
-      ActiveRecord::Base.configurations = dbconfig
-    end
-    config = ActiveRecord::Base.configurations[environment.to_s]
-    p config
-    config
   end
 
   def self.create(environment)
@@ -183,7 +182,13 @@ module DB
     end
   end
 
+  def self.migrate
+    ActiveRecord::Migration.verbose = true
+    ActiveRecord::Migrator.migrate("db/migrate", nil)
+  end
+
 end
 
 DB.create(:development)
 DB.connect_to(:development)
+DB.migrate

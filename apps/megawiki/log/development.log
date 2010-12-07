@@ -1,1 +1,97 @@
 # Logfile created on 2010-12-06 16:19:11 -0800 by logger.rb/25413
+D, [2010-12-07T10:42:49.584568 #24626] DEBUG -- :   [1m[36mSQL (0.5ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:42:49.601697 #24626] DEBUG -- :   [1m[35mSQL (0.2ms)[0m  select sqlite_version(*)
+D, [2010-12-07T10:42:49.603605 #24626] DEBUG -- :   [1m[36mSQL (1.6ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) [0m
+D, [2010-12-07T10:42:49.603788 #24626] DEBUG -- :   [1m[35mSQL (0.0ms)[0m  PRAGMA index_list("schema_migrations")
+D, [2010-12-07T10:42:49.605070 #24626] DEBUG -- :   [1m[36mSQL (1.2ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+D, [2010-12-07T10:42:49.605282 #24626] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:42:49.605678 #24626] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:42:49.606900 #24626] DEBUG -- :   [1m[35mSQL (0.1ms)[0m  SELECT "schema_migrations"."version" FROM "schema_migrations"
+I, [2010-12-07T10:42:49.606971 #24626]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:42:49.656821 #24626] DEBUG -- :   [1m[36mSQL (0.6ms)[0m  [1mCREATE TABLE "articles" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime, "updated_at" datetime, "author_id" integer, "name" varchar(255), "body" varchar(255)) [0m
+D, [2010-12-07T10:42:49.657493 #24626] DEBUG -- :   [1m[35mSQL (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ('1')
+D, [2010-12-07T10:43:20.603301 #24639] DEBUG -- :   [1m[36mSQL (0.8ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:43:20.603810 #24639] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:43:20.605044 #24639] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T10:43:20.605118 #24639]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:43:33.742204 #24657] DEBUG -- :   [1m[36mSQL (0.8ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:43:33.742717 #24657] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:43:33.744020 #24657] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T10:43:33.744104 #24657]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:43:34.187722 #24657] DEBUG -- :   [1m[35mAREL (0.6ms)[0m  INSERT INTO "articles" ("created_at", "updated_at", "author_id", "name", "body") VALUES ('2010-12-07 10:43:34.075250', '2010-12-07 10:43:34.075250', NULL, 'Dogs', 'Dogs are cute.')
+D, [2010-12-07T10:48:38.927210 #24804] DEBUG -- :   [1m[36mSQL (0.7ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:48:38.927676 #24804] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:48:38.928966 #24804] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T10:48:38.929066 #24804]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:48:39.352530 #24804] DEBUG -- :   [1m[35mAREL (0.6ms)[0m  INSERT INTO "articles" ("created_at", "updated_at", "author_id", "name", "body") VALUES ('2010-12-07 10:48:39.303630', '2010-12-07 10:48:39.303630', NULL, 'Dogs', 'Dogs are cute.')
+D, [2010-12-07T10:49:49.910516 #24823] DEBUG -- :   [1m[36mSQL (0.7ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:49:49.911004 #24823] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:49:49.912133 #24823] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T10:49:49.912202 #24823]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:49:50.335868 #24823] DEBUG -- :   [1m[35mAREL (0.6ms)[0m  INSERT INTO "articles" ("created_at", "updated_at", "author_id", "name", "body") VALUES ('2010-12-07 10:49:50.285786', '2010-12-07 10:49:50.285786', NULL, 'Dogs', 'Dogs are cute.')
+D, [2010-12-07T10:50:11.636486 #24825] DEBUG -- :   [1m[36mSQL (0.8ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:50:11.637004 #24825] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:50:11.638143 #24825] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T10:50:11.638219 #24825]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:50:12.068148 #24825] DEBUG -- :   [1m[35mAREL (0.6ms)[0m  INSERT INTO "articles" ("created_at", "updated_at", "author_id", "name", "body") VALUES ('2010-12-07 10:50:12.018764', '2010-12-07 10:50:12.018764', NULL, 'Dogs', 'Dogs are cute.')
+D, [2010-12-07T10:51:04.416718 #24843] DEBUG -- :   [1m[36mSQL (0.7ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T10:51:04.417183 #24843] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T10:51:04.418398 #24843] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T10:51:04.418476 #24843]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T10:51:04.843908 #24843] DEBUG -- :   [1m[35mAREL (0.6ms)[0m  INSERT INTO "articles" ("created_at", "updated_at", "author_id", "name", "body") VALUES ('2010-12-07 10:51:04.795301', '2010-12-07 10:51:04.795301', NULL, 'Dogs', 'Dogs are cute.')
+D, [2010-12-07T11:14:37.748957 #28581] DEBUG -- :   [1m[36mSQL (0.7ms)[0m  [1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+D, [2010-12-07T11:14:37.749496 #28581] DEBUG -- :   [1m[35mSQL (0.1ms)[0m   SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+
+D, [2010-12-07T11:14:37.750724 #28581] DEBUG -- :   [1m[36mSQL (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations"[0m
+I, [2010-12-07T11:14:37.750802 #28581]  INFO -- : Migrating to CreateArticles (1)
+D, [2010-12-07T11:14:38.157039 #28581] DEBUG -- :   [1m[35mAREL (0.5ms)[0m  INSERT INTO "articles" ("created_at", "updated_at", "author_id", "name", "body") VALUES ('2010-12-07 11:14:38.096619', '2010-12-07 11:14:38.096619', NULL, 'Dogs', 'Dogs are cute.')
