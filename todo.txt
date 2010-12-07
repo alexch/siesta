@@ -54,3 +54,6 @@ Sinatra-type goodies:
 * etag
 * serve static files from public directory (see Sinatra::Base#static!)
 * bind to particular hostname/interface
+
+Hook to run code at app startup
+Logging
