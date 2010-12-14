@@ -1,3 +1,7 @@
+# STATUS: UNDER DEVELOPMENT
+
+This is pre-alpha code. YMMV, caveat emptor. It's probably not even working yet.
+
 # Summary
 
 Siesta is a Resource-centric webapp microframework. It rests (ahem) on two principles:
@@ -37,13 +41,15 @@ If your Resource is a natural Command, then the standard controller will invoke 
 
 Definitions:
 
-**unitary resource** Only one of these exists per app or parent resource. Like a home page, or a database collection, or a property of a different resource.
+**part** A subresource.
 
-**collection resource** A resource that represents a collection of other resources, all of the same type.
+**collection** A resource that represents a collection of other resources, all of the same type.
 
-**indexed resource** A resource with an id that is strictly an instance of its parent collection resource.
+**item** A resource with an id that is strictly an instance of its parent collection resource.
 
-**subresource** A unitary resource under an indexed resource. Usually a property of the parent. May be read-write or read-only.
+**perspective** A part that's just a view on that resource. E.g. "/user/new" or "/user/12/edit" or "/dashboard/activity/by_date".
+
+**action** A part that alters the parent resource, e.g. "/user/12/suspend". (Be sure you really want to do this instead of "POST /user/12/suspension" since the latter supports DELETE etc.)
 
 TODO: Re-read the REST paper to see if he's got better names already.
 

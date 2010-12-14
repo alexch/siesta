@@ -12,10 +12,11 @@ WebClient.new do
   get "/home"
   assert {title == "Megawiki: Home"}
 
-  post "/article", :name => "Dogs", :body => "Dogs are cute."
-
-  get "/article/1"
-  assert {title == "Megawiki: Dogs"}
-  assert {doc.css(".main .text").text == "Dogs are cute."}
+  legs = rand(1000) + 1
+  post "/article", :name => "Dogs", :body => "Dogs have #{legs} legs."
+  # redirects to the article page
+  # assert {title == "Megawiki: Dogs"}
+  # assert {doc.css(".main .text").text == "Dogs are cute."}
+  assert { @body.include? "Dogs have #{legs} legs."}
 
 end

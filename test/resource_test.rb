@@ -2,6 +2,7 @@ here = File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(here + "/..")
 require "test/test_helper"
 require "siesta/resource"
+require 'active_record'
 
 module Siesta
   module ResourceTest
@@ -34,16 +35,7 @@ module Siesta
                 resource
               end
               assert { app.resources.include? Poodle }
-              assert { app["/poodle"] == Poodle }
-            end
-
-            it "makes the class the root resource" do
-              class Pug < Dog
-                resource :root
-              end
-              assert { app.root == Pug }
-              assert { app["/"] == Pug }
-              assert("the main path should work as well") { app["/pug"] == Pug }
+              assert { app["poodle"] == Poodle }
             end
 
             it "gives an error about duplicate paths" do
@@ -54,7 +46,7 @@ module Siesta
                   end
                 end
               end
-              assert { e.message == "Path /dog already mapped" }
+              assert { e.message == "Path dog already mapped" }
             end
 
             it "suppresses duplicate path error if it's the same resource" do
@@ -65,6 +57,69 @@ module Siesta
               end
               assert { e.nil? }
             end
+            
+            it "declares part subresources" do
+              class Greyhound < Dog
+                resource
+                part "color"
+                part "size"
+              end
+              assert { Greyhound.parts == ["color", "size"] }
+              assert { Dog.parts.empty? }
+            end
+            
+            it "declares part subresources for items inside collections" do
+              class Whippet < Dog
+                resource :collection
+                part "reverse" # this is a part of the Whippet collection
+                item_part "speed" # this is a part of each whippet item (instance)
+              end
+              assert { Whippet.parts == ["reverse"] }
+              assert { Whippet.item_parts == ["speed"] }
+            end
+            
+            it "raises an exception if you try to use item_part in a non-collection" do
+              e = rescuing {
+                class FoxTerrier < Dog
+                  resource
+                  item_part "speed"
+                end
+              }
+              assert { e }
+              assert { e.message == "undefined method `item_part' for Siesta::ResourceTest::FoxTerrier:Class" }
+            end
+            
+            describe "flags" do
+              it ":root makes the class the root resource" do
+                class Pug < Dog
+                  resource :root
+                end
+                assert { app.root == Pug }
+                assert { app["/"] == Pug }
+                assert("the main path should work as well") { app["/pug"] == Pug }
+              end
+              
+              it "marks the resource as a collection" do
+                class Rotweiler < Dog
+                  resource :collection
+                end
+                assert { Rotweiler.collection? }
+                deny { Dog.collection? }
+                handler = Rotweiler.handler(Request.new({}, nil))
+                assert { handler == CollectionHandler }
+              end
+              
+              it "automatically marks an ActiveRecord object as a collection" do
+                class Yorkie < ActiveRecord::Base
+                  include Siesta::Resource
+                  resource
+                end
+                assert { Yorkie.collection? }
+                assert { Yorkie.handler(Request.new({}, nil)) == CollectionHandler }
+              end
+            end
+            
+            
           end
 
           describe "#path" do
@@ -80,11 +135,6 @@ module Siesta
             end
           end
 
-          describe "#path_template" do
-            it "contains a placeholder for the instance's id" do
-              assert { Dog.path_template == "/dog/:id" }
-            end
-          end
         end
 
         describe "instance methods" do

@@ -1,3 +1,5 @@
+require 'erector'
+
 module Siesta
   # A Handler is like a Controller. It handles client requests.
 
@@ -6,13 +8,7 @@ module Siesta
   class Handler
 
     def self.for(request)
-      resource = request.resource
-      handler_class = if resource.ancestors.include?(Erector::Widget)
-        WidgetHandler
-      elsif resource.ancestors.include?(ActiveRecord::Base)
-        ActiveRecordHandler
-      end
-      raise "Couldn't find handler for #{resource}" if handler_class.nil?
+      handler_class = request.resource.handler(request)
       handler_class.new(request)
     end
 
@@ -42,22 +38,74 @@ module Siesta
     end
 
     def handle
-      self.send verb
-      # todo: catch exceptions here and turn them into errors
+      result = self.send verb
+      # todo: catch exceptions here and turn them into HTTP errors
+      # todo: if redirect, use a standard view
+      render result
+    end
+    
+    # todo: test all cases
+    def render(result)
+      case request.context #todo: split on request.context when finding handler? (polymorphism over switch)
+        when 'html'
+          # assume the view is an Erector widget for now
+          response.write html(result)
+        when 'json'
+          response.write json(result)
+        else
+          raise "Unknown context #{request.context}"
+      end
+    end
+    
+    def html(result)
+      h = if result.is_a? Erector::Widget
+        result.to_html
+      elsif result.is_a? Class and result.ancestors.include? Erector::Widget
+        puts "hi"
+        result.new({:resource => resource}).to_html
+      elsif result.is_a? String
+        result
+      elsif result.is_a? Hash
+        view(result).new({:resource => resource} << result).to_html
+      else
+        view(result).new({:resource => resource, :value => result}).to_html
+      end
+      h
+    end
+    
+    def json(result)
+      hash = if (result.is_a? Hash or result.is_a? Array)
+        result
+      elsif result.respond_to? :serializable_hash
+        result.serializable_hash
+      else
+        {:value => result}
+      end
+        hash.to_json
+    end
+    
+    def view(result)
+      # todo: figure out how to set application or path view templates
+      GenericView
     end
 
+  end
+  
+  class GenericView < Erector::Widget
+    def content
+      pre @resource.pretty_inspect
+    end
   end
 
   class GenericHandler < Handler
     def get
-      response.write resource.inspect
+      resource
     end
   end
 
-  class WidgetHandler < Handler
+  class WidgetHandler < Handler    
     def get
-      widget = resource.new(params)
-      response.write widget.to_html
+      resource.new(params)
     end
 
     def post
@@ -65,16 +113,47 @@ module Siesta
     end
   end
 
-  class ActiveRecordHandler < Handler
+  class CollectionHandler < Handler
+    # todo: test
     def get
-#      response.write resource.find(params[:id]) # meh
+      resource.all
     end
-
+    
     def post
-      @new_resource = resource.create(params)
+      # todo: command pattern
       # todo: error handling
+      # todo: status message
+      item = resource.create(params)
+      response.redirect item.path
+    end
+  end
+  
+  class ItemHandler < Handler
+    
+    def get
+      self
+    end
+    
+    def put
+      # todo: command pattern
+      # todo: error handling
+      # todo: status message
+      resource.update(params)
       response.redirect resource.path
     end
+    
+    def delete
+      # todo: command pattern
+      # todo: error handling
+      # todo: status message
+      resource.destroy
+      response.redirect collection.path
+    end
+    
+    def collection
+      self.class # override for non-ActiveRecord
+    end
+    
   end
 
 end

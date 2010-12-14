@@ -4,9 +4,6 @@ require 'siesta/config'
 require 'siesta/request'
 require 'siesta/handler'
 
-require 'siesta/welcome_page'
-require 'siesta/not_found_page'
-
 module Siesta
   class Application
     def self.instance
@@ -18,16 +15,17 @@ module Siesta
     end
 
     def resources
-      @resource_paths.values
+      @resources.values
     end
 
     def initialize
-      @resource_paths = {"/" => Siesta::WelcomePage}
+      require 'siesta/welcome_page'
+      @resources = {"" => Siesta::WelcomePage}
     end
 
     ## A Rack application is an Ruby object (not a class) that responds to +call+...
     def call(env)
-      request = Siesta::Request.new(env)
+      request = Siesta::Request.new(env, self)
       handle_request(request)
       status, headers, body = request.finish
       ## ...and returns an Array of exactly three values: status, headers, body
@@ -36,26 +34,24 @@ module Siesta
 
     # todo: test
     def handle_request(request)
-      # d { request }
-      # d { request.path }
-      resource = self[request.path]
-      if resource.nil?
-        request.response.status = 404
-        # todo: different error body for JSON vs. HTML
-        request.response.write NotFoundPage.new(:path => request.path).to_html
-        # response.write("#{request.path} not found")
-      else
-        request.resource = resource
-        Handler.for(request).handle
-      end
+      resources = request.resources
+      request.resource = resources.last
+      raise NotFound, request.path if request.resource.nil?
+      Handler.for(request).handle
+    rescue NotFound
+      require 'siesta/not_found_page'
+      request.response.status = 404
+      # todo: different error body for JSON vs. HTML
+      request.response.write NotFoundPage.new(:path => request.path).to_html
+      # response.write("#{request.path} not found")
     end
 
     def root=(resource)
-      @resource_paths["/"] = resource
+      @resources[""] = resource
     end
 
     def root
-      self["/"]
+      self[""]
     end
 
     def log msg
@@ -63,12 +59,12 @@ module Siesta
     end
 
     def <<(resource)
-      path = path_for(resource)
-      if @resource_paths[path]
-        raise "Path #{path} already mapped" unless @resource_paths[path] == resource
+      path = strip_slashes(path_for(resource))
+      if @resources[path]
+        raise "Path #{path} already mapped" unless @resources[path] == resource
       else
         log "Registering #{path} => #{resource}"
-        @resource_paths[path] = resource
+        @resources[path] = resource
       end
     end
 
@@ -96,7 +92,11 @@ module Siesta
     end
 
     def [](path)
-      @resource_paths[path]
+      @resources[strip_slashes(path)]
+    end
+    
+    def strip_slashes(path)
+      path.reverse.chomp("/").reverse.chomp("/")
     end
 
   end

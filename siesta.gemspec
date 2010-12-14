@@ -17,7 +17,7 @@ Got a domain object? Make it a Siesta::Resource and get a well-deserved REST.
   s.test_files = Dir['test/**/*.rb']
 
   s.has_rdoc = true
-  s.extra_rdoc_files = %w[README.markdown]
+  s.extra_rdoc_files = %w[README.md]
 
   s.add_dependency "extlib"
 

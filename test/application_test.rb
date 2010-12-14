@@ -56,11 +56,46 @@ module Siesta
           assert { @application.resources.include_only? Siesta::WelcomePage }
         end
       end
+      
+      describe '#strip_slashes' do
+        it "strips slashes from the beginning" do
+          assert { @application.strip_slashes("/foo") == "foo" }
+        end
+        it "strips slashes from the end" do
+          assert { @application.strip_slashes("/foo") == "foo" }
+        end
+        it "strips slashes from the beginning and the end" do
+          assert { @application.strip_slashes("/foo") == "foo" }
+        end
+        it "works on an empty string" do
+          assert { @application.strip_slashes("") == "" }
+        end
+        it "works on a single slash" do
+          assert { @application.strip_slashes("/") == "" }
+        end
+        it "leaves a normal string alone" do
+          assert { @application.strip_slashes("x/y") == "x/y" }
+        end
+      end
+      
+      describe '#[]' do
+        it "looks up a resource by name" do
+          assert { @application[""] == Siesta::WelcomePage }
+        end
+
+        it "strips leading and trailing slashes" do
+          assert { @application["/"] == Siesta::WelcomePage }
+          @application << Dog
+          assert { @application["/dog"] == Dog }
+          assert { @application["dog/"] == Dog }
+          assert { @application["/dog/"] == Dog }
+        end
+      end
 
       describe "<<" do
         it "adds a resource, using its natural path" do
           @application << Dog
-          assert { @application["/dog"] == Dog }
+          assert { @application["dog"] == Dog }
         end
 
         it "gives an error about duplicate paths" do
@@ -86,6 +121,7 @@ module Siesta
 
       describe "[]" do
         it "looks up a resource for the given path" do
+          assert { @application[""] == Siesta::WelcomePage }
           assert { @application["/"] == Siesta::WelcomePage }
           @application << Dog
           assert { @application["/dog"] == Dog }

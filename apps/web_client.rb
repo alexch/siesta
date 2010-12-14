@@ -68,13 +68,14 @@ class WebClient
   def handle_response(response, redirects = 0)
     case response
       when Net::HTTPSuccess # 200
-        @html = response.body
-        @doc = Nokogiri::HTML(@html)
-        @html
+        @body = response.body
+        @doc = Nokogiri::HTML(@body)
       when Net::HTTPRedirection # 302
-        get(response['location'], redirects + 1)
+        location = response['location']
+        puts "REDIRECT #{location}"
+        get(location, redirects + 1)
       else
-        puts "Error response = #{response.body.inspect}"
+        puts "Error response = #{response.body.inspect}"[0..5000]
         response.value # Yes, it's a stupid name for a method that "Raises HTTP error if the response is not 2xx."
     end
   end
