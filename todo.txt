@@ -1,11 +1,5 @@
-* "rake routes" script
-  - shows the URLs and the Object and file names that implement them
 
-* different plugins
-** Rack version
-** Sinatra version
-** Rails version
-** JS version? (1-page app)
+Make Application be a Resource and unify Part handling
 
 * "new" and "edit" as subresources
 ** POST /foo/new -> POST /foo
@@ -46,6 +40,14 @@ Commands
 * errors
   * x return type
 
+* "rake routes" script
+  - shows the URLs and the Object and file names that implement them
+
+* different plugins
+** Rack version
+** Sinatra version
+** Rails version
+** JS version? (1-page app)
 
 Sinatra-type goodies:
 * upload file (multipart)
