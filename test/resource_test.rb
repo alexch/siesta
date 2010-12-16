@@ -58,7 +58,7 @@ module Siesta
               assert { e.nil? }
             end
             
-            it "declares part subresources" do
+            it "declares part subresources by name" do
               class Greyhound < Dog
                 resource
                 part "color"
@@ -67,6 +67,14 @@ module Siesta
               assert { Greyhound.parts == ["color", "size"] }
               assert { Dog.parts.empty? }
             end
+
+            # it "declares part subresources by type using symbols" do
+            #   # necessary for "forward declarations" in case you want to 
+            #   # declare the parent class before declaring the child class
+            #   class SpringerSpaniel < Dog
+            #     part :ear
+            #   end
+            # end
             
             it "declares part subresources for items inside collections" do
               class Whippet < Dog
@@ -117,8 +125,7 @@ module Siesta
                 assert { Yorkie.collection? }
                 assert { Yorkie.handler(Request.new({}, nil)) == CollectionHandler }
               end
-            end
-            
+            end            
             
           end
 

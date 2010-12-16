@@ -78,7 +78,7 @@ module Siesta
         true
       end      
     end
-    
+
     module ItemMethods
       def handler(request)
         @_siesta_handler ||= ItemHandler
