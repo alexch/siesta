@@ -3,13 +3,13 @@ $: << File.expand_path(here + "/..")
 require "test/test_helper"
 
 require "siesta/part"
-require "siesta/resource"
+require "siesta/resourceful"
 
 module Siesta
   module PartTest
     describe Part do
       class Omelet
-        include Siesta::Resource
+        include Siesta::Resourceful
         class << self
           attr_accessor :cheese
         end
@@ -28,7 +28,7 @@ module Siesta
         assert { @part.parent == Omelet }
       end
 
-      it "parent must be a Resource" do
+      it "parent must be a Resourceful" do
         e = rescuing do
           Part.new(Object, "cheese")
         end

@@ -12,7 +12,7 @@ require "#{here}/../db"
 ########## Megawiki Domain
 
 class Article < ActiveRecord::Base
-  include Siesta::Resource
+  include Siesta::Resourceful
 end
 
 ########## Megawiki Views
@@ -81,7 +81,7 @@ end
 ###########################################################################
 
 class Home < MegawikiPage
-  include Siesta::Resource
+  include Siesta::Resourceful
   resource :root
 
   def main_content
@@ -92,7 +92,7 @@ end
 ###########################################################################
 
 class ArticlePage < MegawikiPage
-  include Siesta::Resource
+  include Siesta::Resourceful
 
   def main_content
     text "TBD"

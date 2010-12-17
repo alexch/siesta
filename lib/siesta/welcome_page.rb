@@ -1,9 +1,9 @@
 require "erector"
-require "siesta/resource"
+require "siesta/resourceful"
 
 module Siesta
   class WelcomePage < Erector::Widgets::Page
-    include Siesta::Resource
+    include Siesta::Resourceful
     def page_title
       "Welcome to Siesta"
     end

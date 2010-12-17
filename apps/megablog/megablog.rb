@@ -6,7 +6,7 @@ require 'siesta'
 ########## Megablog Domain
 
 class Article
-  include Siesta::Resource
+  include Siesta::Resourceful
 end
 
 
@@ -75,7 +75,7 @@ end
 ###########################################################################
 
 class Home < MegablogPage
-  include Siesta::Resource
+  include Siesta::Resourceful
   resource :root
 
   def main_content
@@ -86,7 +86,7 @@ end
 ###########################################################################
 
 class Editorial < MegablogPage
-  include Siesta::Resource
+  include Siesta::Resourceful
 
   def main_content
     text "TBD"

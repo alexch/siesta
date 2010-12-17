@@ -10,5 +10,5 @@ require "siesta/version"
 
 require "siesta/server"
 require "siesta/application"
-require "siesta/resource"
+require "siesta/resourceful"
 

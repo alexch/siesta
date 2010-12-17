@@ -1,8 +1,8 @@
 require 'siesta/application'
 
-# 'include Siesta::Resource' if you want your class to support fun self-declarations
+# 'include Siesta::Resourceful' if you want your class to support fun self-declarations
 module Siesta
-  module Resource
+  module Resourceful
     def self.included(in_class)
       in_class.send(:extend, ClassMethods)
       in_class.resource

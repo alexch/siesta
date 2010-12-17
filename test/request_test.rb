@@ -2,7 +2,7 @@ here = File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(here + "/..")
 require "test/test_helper"
 require "siesta/request"
-require "siesta/resource"
+require "siesta/resourceful"
 
 module Siesta
   module RequestTest
@@ -48,7 +48,7 @@ module Siesta
       
       describe '#resources' do
         class Article < Struct.new(:id)
-          include Siesta::Resource
+          include Siesta::Resourceful
           resource :collection
           part "most_popular"
           item_part "title"

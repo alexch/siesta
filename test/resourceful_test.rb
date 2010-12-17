@@ -1,12 +1,12 @@
 here = File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(here + "/..")
 require "test/test_helper"
-require "siesta/resource"
+require "siesta/resourceful"
 require 'active_record'
 
 module Siesta
-  module ResourceTest
-    describe Resource do
+  module ResourcefulTest
+    describe Resourceful do
       before do
         @original_instance = Application.instance
       end
@@ -18,7 +18,7 @@ module Siesta
       describe "when included in a class" do
         before do
           class Dog
-            include Siesta::Resource unless self.ancestors.include? Siesta::Resource
+            include Siesta::Resourceful unless self.ancestors.include? Siesta::Resourceful
           end
         end
 
@@ -42,7 +42,7 @@ module Siesta
               e = rescuing do
                 module Another
                   class Dog
-                    include Siesta::Resource
+                    include Siesta::Resourceful
                   end
                 end
               end
@@ -94,7 +94,7 @@ module Siesta
                 end
               }
               assert { e }
-              assert { e.message == "undefined method `item_part' for Siesta::ResourceTest::FoxTerrier:Class" }
+              assert { e.message == "undefined method `item_part' for Siesta::ResourcefulTest::FoxTerrier:Class" }
             end
             
             describe "flags" do
@@ -119,7 +119,7 @@ module Siesta
               
               it "automatically marks an ActiveRecord object as a collection" do
                 class Yorkie < ActiveRecord::Base
-                  include Siesta::Resource
+                  include Siesta::Resourceful
                   resource
                 end
                 assert { Yorkie.collection? }
