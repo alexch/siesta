@@ -76,7 +76,7 @@ end
 
 class Home < MegablogPage
   include Siesta::Resourceful
-  resource :root
+  resourceful :root
 
   def main_content
     text "TBD"

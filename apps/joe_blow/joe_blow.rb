@@ -47,7 +47,7 @@ end
 
 class Home < JoeBlowPage
   include Siesta::Resourceful
-  resource :root
+  resourceful :root
   
   def main
     div :class => 'main' do

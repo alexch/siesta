@@ -82,7 +82,7 @@ end
 
 class Home < MegawikiPage
   include Siesta::Resourceful
-  resource :root
+  resourceful :root
 
   def main_content
     text "TBD"
