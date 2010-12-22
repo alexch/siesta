@@ -41,15 +41,21 @@ If your Resource is a natural Command, then the standard controller will invoke 
 
 Definitions:
 
-**part** A subresource.
+**part** A subresource. For "/admin/user/12", "user" is a part of "admin", and "12" (aka "user 12") is a part of "user".
 
-**collection** A resource that represents a collection of other resources, all of the same type.
+**collection** A resource that represents a collection of other resources, all of the same type. e.g. "user" as above. (TODO: Rename to "group")
 
-**item** A resource with an id that is strictly an instance of its parent collection resource.
+**item** A resource with an id that is strictly an instance of its parent collection resource. e.g. For "/admin/user/12", "user 12" is an item. (Rename to "instance" or "member" or something even better?)
 
-**perspective** A part that's just a view on that resource. E.g. "/user/new" or "/user/12/edit" or "/dashboard/activity/by_date".
+**unitary** A resource with no instances, or whose instances have the same path. E.g. a landing page. (Should be "singleton" but that already means something slightly different.) E.g. For "/admin/user/12", "admin" is singular -- there is no such thing as an admin item, just an admin part.
 
-**action** A part that alters the parent resource, e.g. "/user/12/suspend". (Be sure you really want to do this instead of "POST /user/12/suspension" since the latter supports DELETE etc.)
+**perspective** A unitary part that's just a view on its parent resource. E.g. "/user/new" or "/user/12/edit" or "/dashboard/activity/by_date". (Rename to "aspect"?)
+
+**action** A part that alters the parent resource, e.g. "/user/12/suspend". (Be sure you really want to do this instead of "POST /user/12/suspension" since the latter is more powerful in the REST paradigm -- it cleanly supports DELETE, properties, etc.)
+
+**target** The particular object (or class) a request is referring to.
+
+**resource** An abstraction above a target or set of targets.
 
 TODO: Re-read the REST paper to see if he's got better names already.
 
