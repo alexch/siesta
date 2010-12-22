@@ -16,3 +16,8 @@ class Hash
   end
 end
 
+class String
+  def strip_slashes
+    reverse.chomp("/").reverse.chomp("/")
+  end
+end
