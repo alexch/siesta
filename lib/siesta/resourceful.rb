@@ -5,13 +5,10 @@ module Siesta
   module Resourceful
     def self.included(in_class)
       in_class.send(:extend, ClassMethods)
-      in_class.resource
     end
 
     module ClassMethods
-      def resource(*flags) #todo: add "path" and other parameters
-        Siesta::Application.instance << self
-        
+      def resourceful(*flags) #todo: add "path" and other parameters        
         if defined? ActiveRecord and ancestors.include?(ActiveRecord::Base) # todo: ActiveModel
           flags << :collection
         end
@@ -32,6 +29,8 @@ module Siesta
         if flags.include? :view
           @_siesta_handler = WidgetHandler
         end
+
+		Application.instance << self
       end
 
       def collection?

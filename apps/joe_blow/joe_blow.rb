@@ -4,6 +4,8 @@ require 'erector'
 require 'siesta'
 
 class JoeBlowPage < Erector::Widgets::Page
+  include Siesta::Resourceful
+
   external :style, <<-CSS  
   body { margin: 0;}
   .nav { float: left; border: 1px solid black; margin: .5em; padding: 1em; }
@@ -46,7 +48,6 @@ end
 ###########################################################################
 
 class Home < JoeBlowPage
-  include Siesta::Resourceful
   resourceful :root
   
   def main
@@ -59,7 +60,7 @@ end
 ###########################################################################
 
 class Projects < JoeBlowPage
-  include Siesta::Resourceful
+  resourceful
   
   def main
     div :class => 'main' do
@@ -75,7 +76,7 @@ end
 ###########################################################################
 
 class Resume < JoeBlowPage
-  include Siesta::Resourceful
+  resourceful
   
   def main
     div :class => 'main' do

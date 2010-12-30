@@ -18,7 +18,8 @@ module Siesta
       describe "when included in a class" do
         before do
           class Dog
-            include Siesta::Resourceful unless self.ancestors.include? Siesta::Resourceful
+            include Siesta::Resourceful
+            resourceful
           end
         end
 
@@ -32,7 +33,7 @@ module Siesta
           describe "#resource" do
             it "adds the class to the default application" do
               class Poodle < Dog
-                resource
+                resourceful
               end
               assert { app.resources.include? Poodle }
               assert { app["poodle"] == Poodle }
@@ -43,6 +44,7 @@ module Siesta
                 module Another
                   class Dog
                     include Siesta::Resourceful
+                    resourceful
                   end
                 end
               end
@@ -52,7 +54,7 @@ module Siesta
             it "suppresses duplicate path error if it's the same resource" do
               e = rescuing do
                 class Dog
-                  resource
+                  resourceful
                 end
               end
               assert { e.nil? }
@@ -60,7 +62,7 @@ module Siesta
             
             it "declares part subresources by name" do
               class Greyhound < Dog
-                resource
+                resourceful
                 part "color"
                 part "size"
               end
@@ -78,7 +80,7 @@ module Siesta
             
             it "declares part subresources for items inside collections" do
               class Whippet < Dog
-                resource :collection
+                resourceful :collection
                 part "reverse" # this is a part of the Whippet collection
                 item_part "speed" # this is a part of each whippet item (instance)
               end
@@ -89,7 +91,7 @@ module Siesta
             it "raises an exception if you try to use item_part in a non-collection" do
               e = rescuing {
                 class FoxTerrier < Dog
-                  resource
+                  resourceful
                   item_part "speed"
                 end
               }
@@ -100,7 +102,7 @@ module Siesta
             describe "flags" do
               it ":root makes the class the root resource" do
                 class Pug < Dog
-                  resource :root
+                  resourceful :root
                 end
                 assert { app.root == Pug }
                 assert { app["/"] == Pug }
@@ -109,7 +111,7 @@ module Siesta
               
               it "marks the resource as a collection" do
                 class Rotweiler < Dog
-                  resource :collection
+                  resourceful :collection
                 end
                 assert { Rotweiler.collection? }
                 deny { Dog.collection? }
@@ -117,14 +119,14 @@ module Siesta
                 assert { handler == CollectionHandler }
               end
               
-              it "automatically marks an ActiveRecord object as a collection" do
-                class Yorkie < ActiveRecord::Base
-                  include Siesta::Resourceful
-                  resource
-                end
-                assert { Yorkie.collection? }
-                assert { Yorkie.handler(Request.new({}, nil)) == CollectionHandler }
-              end
+#              it "automatically marks an ActiveRecord object as a collection" do
+#                class Yorkie < ActiveRecord::Base
+#                  include Siesta::Resourceful
+#                  resourceful
+#                end
+#                assert { Yorkie.collection? }
+#                assert { Yorkie.handler(Request.new({}, nil)) == CollectionHandler }
+#              end
             end            
             
           end
@@ -136,7 +138,7 @@ module Siesta
 
             it "underscores compound class names" do
               class GreatDane < Dog
-                resource
+                resourceful
               end
               assert { GreatDane.path == "/great_dane" }
             end

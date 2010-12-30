@@ -7,6 +7,7 @@ require 'siesta'
 
 class Article
   include Siesta::Resourceful
+  resourceful
 end
 
 
@@ -15,6 +16,8 @@ end
 # The abstract page class for all Megablog web pages.
 # Subclasses should override #main.
 class MegablogPage < Erector::Widgets::Page
+  include Siesta::Resourceful
+
   external :style, <<-CSS
   body { margin: 0;}
   .nav { float: left; margin: .5em; padding: 1em; }
@@ -75,7 +78,6 @@ end
 ###########################################################################
 
 class Home < MegablogPage
-  include Siesta::Resourceful
   resourceful :root
 
   def main_content
@@ -86,7 +88,7 @@ end
 ###########################################################################
 
 class Editorial < MegablogPage
-  include Siesta::Resourceful
+  resourceful
 
   def main_content
     text "TBD"

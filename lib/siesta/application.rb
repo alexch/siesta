@@ -60,7 +60,7 @@ module Siesta
 
     def <<(resource)
       path = strip_slashes(path_for(resource))
-      if @resources[path]
+      if self[path]
         raise "Path #{path} already mapped" unless @resources[path] == resource
       else
         log "Registering #{path} => #{resource}"

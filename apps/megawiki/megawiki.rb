@@ -13,6 +13,7 @@ require "#{here}/../db"
 
 class Article < ActiveRecord::Base
   include Siesta::Resourceful
+  resourceful
 end
 
 ########## Megawiki Views
@@ -20,6 +21,7 @@ end
 # The abstract page class for all Megawiki web pages.
 # Subclasses should override #main.
 class MegawikiPage < Erector::Widgets::Page
+  include Siesta::Resourceful
   external :style, <<-CSS
   body { margin: 0;}
   .nav { float: left; margin: .5em; padding: 1em; }
@@ -81,7 +83,6 @@ end
 ###########################################################################
 
 class Home < MegawikiPage
-  include Siesta::Resourceful
   resourceful :root
 
   def main_content
@@ -92,7 +93,7 @@ end
 ###########################################################################
 
 class ArticlePage < MegawikiPage
-  include Siesta::Resourceful
+  resourceful
 
   def main_content
     text "TBD"

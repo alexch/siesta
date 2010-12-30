@@ -61,7 +61,6 @@ module Siesta
       h = if result.is_a? Erector::Widget
         result.to_html
       elsif result.is_a? Class and result.ancestors.include? Erector::Widget
-        puts "hi"
         result.new({:resource => resource}).to_html
       elsif result.is_a? String
         result

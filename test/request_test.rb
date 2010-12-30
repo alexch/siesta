@@ -49,7 +49,7 @@ module Siesta
       describe '#resources' do
         class Article < Struct.new(:id)
           include Siesta::Resourceful
-          resource :collection
+          resourceful :collection
           part "most_popular"
           item_part "title"
           
