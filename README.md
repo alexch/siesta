@@ -43,11 +43,11 @@ Definitions:
 
 **part** A subresource. For "/admin/user/12", "user" is a part of "admin", and "12" (aka "user 12") is a part of "user".
 
-**collection** A resource that represents a collection of other resources, all of the same type. e.g. "user" as above. (TODO: Rename to "group")
+**group** A resource that represents a collection of other resources, all of the same type. e.g. "user" as above. Also known as repository (?)
 
-**item** A resource with an id that is strictly an instance of its parent collection resource. e.g. For "/admin/user/12", "user 12" is an item. (Rename to "instance" or "member" or something even better?)
+**member** A resource with an id that is strictly an instance of its parent collection resource. e.g. For "/admin/user/12", "user 12" is an item. 
 
-**unitary** A resource with no instances, or whose instances have the same path. E.g. a landing page. (Should be "singleton" but that already means something slightly different.) E.g. For "/admin/user/12", "admin" is singular -- there is no such thing as an admin item, just an admin part.
+**unique** A resource with no instances, or whose instances have the same path. E.g. a landing page. (Should be "singleton" but that already means something slightly different.) E.g. For "/admin/user/12", "admin" is singular -- there is no such thing as an admin item, just an admin part.
 
 **perspective** A unitary part that's just a view on its parent resource. E.g. "/user/new" or "/user/12/edit" or "/dashboard/activity/by_date". (Rename to "aspect"?)
 

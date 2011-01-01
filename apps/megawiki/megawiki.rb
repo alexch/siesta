@@ -13,7 +13,7 @@ require "#{here}/../db"
 
 class Article < ActiveRecord::Base
   include Siesta::Resourceful
-  resourceful
+  resourceful :group
 end
 
 ########## Megawiki Views
@@ -24,11 +24,13 @@ class MegawikiPage < Erector::Widgets::Page
   include Siesta::Resourceful
   external :style, <<-CSS
   body { margin: 0;}
-  .nav { float: left; margin: .5em; padding: 1em; }
-  .nav ul { list-style: none; }
-  .main { padding: 0 1em 1em 12em; border-left: 1px solid black; }
   .header { border-bottom: 1px solid black; text-align: center; }
+  .header h1 { margin: 0; }
   .footer { clear: both; border-top: 1px solid black; text-align: center; }
+  .nav { float: left; margin: 0 .5em; padding: 1em; vertical-align: top; width: 8em; }
+  .nav ul { list-style: none; }
+  .main { margin-left: 8em; padding: 1em; border-left: 1px solid black; min-height: 10em; }
+  .search { border: 1px solid black;}
   CSS
 
   needs :main_widget => nil
@@ -38,7 +40,9 @@ class MegawikiPage < Erector::Widgets::Page
   end
 
   def body_content
-    h1 "Megawiki", :class => "header"
+    div :class => 'header' do
+      h1 "Megawiki"
+    end
 
     div :class => 'nav' do
       nav
@@ -56,9 +60,9 @@ class MegawikiPage < Erector::Widgets::Page
   def nav
     ul do
       li { a "Home", :href => Home.path }
-#      li { a "Create", :href => Article.path }
-#      li { a "Edit", :href => Editorial.path }
-#      li { a "Search", :href => Home.path }
+      #      li { a "Create", :href => Article.path }
+      #      li { a "Edit", :href => Editorial.path }
+      #      li { a "Search", :href => Home.path }
     end
   end
 
@@ -78,6 +82,20 @@ class MegawikiPage < Erector::Widgets::Page
     p "Feel free to copy this site or use it as insipration for your own apps."
   end
 
+  def search_box
+    form :method => "get", :action => "/article" do
+      table :class => "search" do
+        tr do
+          td do
+            input :type => "text", :name => "name"
+          end
+          td do
+            input :type => "submit"
+          end
+        end
+      end
+    end
+  end
 end
 
 ###########################################################################
@@ -85,8 +103,9 @@ end
 class Home < MegawikiPage
   resourceful :root
 
-  def main_content
-    text "TBD"
+  def main   
+    text "Welcome to Megawiki"
+    search_box
   end
 end
 
@@ -95,7 +114,7 @@ end
 class ArticlePage < MegawikiPage
   resourceful
 
-  def main_content
+  def main
     text "TBD"
   end
 end
