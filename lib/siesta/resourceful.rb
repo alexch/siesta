@@ -22,8 +22,8 @@ module Siesta
         end        
 
         if flags.include? :collection
-          self.send(:extend, CollectionMethods)
-          self.send(:include, ItemMethods)
+          self.send(:extend, GroupMethods)
+          self.send(:include, MemberMethods)
         end
         
         if flags.include? :view
@@ -59,7 +59,7 @@ module Siesta
       end
     end
     
-    module CollectionMethods
+    module GroupMethods
       def item_parts
         @_siesta_item_parts ||= []
       end
@@ -70,7 +70,7 @@ module Siesta
       end
       
       def handler(request)
-        @_siesta_handler ||= CollectionHandler
+        @_siesta_handler ||= GroupHandler
       end
       
       def collection?
@@ -78,9 +78,9 @@ module Siesta
       end      
     end
 
-    module ItemMethods
+    module MemberMethods
       def handler(request)
-        @_siesta_handler ||= ItemHandler
+        @_siesta_handler ||= MemberHandler
       end
     end      
 

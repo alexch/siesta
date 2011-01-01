@@ -116,7 +116,7 @@ module Siesta
                 assert { Rotweiler.collection? }
                 deny { Dog.collection? }
                 handler = Rotweiler.handler(Request.new({}, nil))
-                assert { handler == CollectionHandler }
+                assert { handler == GroupHandler }
               end
               
 #              it "automatically marks an ActiveRecord object as a collection" do
@@ -125,7 +125,7 @@ module Siesta
 #                  resourceful
 #                end
 #                assert { Yorkie.collection? }
-#                assert { Yorkie.handler(Request.new({}, nil)) == CollectionHandler }
+#                assert { Yorkie.handler(Request.new({}, nil)) == GroupHandler }
 #              end
             end            
             

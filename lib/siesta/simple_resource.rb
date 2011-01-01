@@ -14,7 +14,7 @@ module Resource
   
 end
 
-module Collection < Resource
+module Group < Resource
   def child(children)
     id = children.shift
     parts[id] or find(id)

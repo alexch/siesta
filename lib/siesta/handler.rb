@@ -112,7 +112,7 @@ module Siesta
     end
   end
 
-  class CollectionHandler < Handler
+  class GroupHandler < Handler
     # todo: test
     def get
       resource.all
@@ -127,7 +127,7 @@ module Siesta
     end
   end
   
-  class ItemHandler < Handler
+  class MemberHandler < Handler
     
     def get
       self

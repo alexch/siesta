@@ -61,7 +61,7 @@ module Siesta
     def initialize(parent_resource)
       super(nil)
       @parent_resource = parent_resource
-      @handler = ItemHandler
+      @handler = MemberHandler
     end
 
     def path
