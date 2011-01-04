@@ -15,8 +15,10 @@ WebClient.new do
   legs = rand(1000) + 1
   post "/article", :name => "Dogs", :body => "Dogs have #{legs} legs."
   # redirects to the article page
-  # assert {title == "Megawiki: Dogs"}
-  # assert {doc.css(".main .text").text == "Dogs are cute."}
-  assert { @body.include? "Dogs have #{legs} legs."}
+  assert {title == "Megawiki: Dogs"}
+  assert {doc.css(".main .name").text == "Dogs"}
+  assert {doc.css(".main .body").text == "Dogs have #{legs} legs."}
+
+  # get "#{path}/edit"
 
 end

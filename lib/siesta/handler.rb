@@ -80,14 +80,21 @@ module Siesta
       else
         {:value => result}
       end
-        hash.to_json
+      hash.to_json
     end
     
     def view(result)
-      # todo: figure out how to set application or path view templates
+      constant_named resource.class.name + 'Page' or
+      constant_named resource.class.name + 'View' or
       GenericView
     end
 
+    # todo: move to ext?
+    def constant_named(name)
+      Kernel.const_get(name)
+    rescue NameError
+      nil
+    end
   end
   
   class GenericView < Erector::Widget
@@ -130,7 +137,7 @@ module Siesta
   class MemberHandler < Handler
     
     def get
-      self
+      resource
     end
     
     def put

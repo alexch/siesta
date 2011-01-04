@@ -45,12 +45,12 @@ class WebClient
     URI.parse("http://#{@host}:#{@port}#{path}")
   end
 
-  attr_reader :html, :doc, :server
+  attr_reader :server, :http, :html, :doc, :path
 
   def get(path, redirects = 0)
     raise "Too many redirects to #{path}" if redirects > 3
 
-    path = process_path(path)
+    @path = process_path(path)
     puts "GET #{url_from(path)}"
 
     response = @http.get path
@@ -58,7 +58,7 @@ class WebClient
   end
 
   def post(path, params)
-    path = process_path(path)
+    @path = process_path(path)
     puts "POST #{url_from(path)} #{params.inspect}"
 
     response = @http.post path, params.to_params
@@ -75,8 +75,8 @@ class WebClient
         puts "REDIRECT #{location}"
         get(location, redirects + 1)
       else
-        puts "Error response = #{response.body.inspect}"[0..5000]
-        response.value # Yes, it's a stupid name for a method that "Raises HTTP error if the response is not 2xx."
+        puts "Error #{response} = #{response.body.inspect}"[0..5000]
+        response.value # Yes, "value" is a stupid name for a method that "Raises HTTP error if the response is not 2xx."
     end
   end
 

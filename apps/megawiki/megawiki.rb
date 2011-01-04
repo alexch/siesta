@@ -103,7 +103,7 @@ end
 class Home < MegawikiPage
   resourceful :root
 
-  def main   
+  def main
     text "Welcome to Megawiki"
     search_box
   end
@@ -112,10 +112,15 @@ end
 ###########################################################################
 
 class ArticlePage < MegawikiPage
-  resourceful
+  needs :resource, :value
+
+  def page_title
+    "Megawiki: #{@resource.name}"
+  end
 
   def main
-    text "TBD"
+    h1 @resource.name, :class => "name"
+    p @resource.body, :class => "body"
   end
 end
 
