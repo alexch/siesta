@@ -112,15 +112,15 @@ end
 ###########################################################################
 
 class ArticlePage < MegawikiPage
-  needs :resource, :value
+  needs :object, :value
 
   def page_title
-    "Megawiki: #{@resource.name}"
+    "Megawiki: #{@object.name}"
   end
 
   def main
-    h1 @resource.name, :class => "name"
-    p @resource.body, :class => "body"
+    h1 @object.name, :class => "name"
+    p @object.body, :class => "body"
   end
 end
 

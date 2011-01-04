@@ -61,13 +61,13 @@ module Siesta
       h = if result.is_a? Erector::Widget
         result.to_html
       elsif result.is_a? Class and result.ancestors.include? Erector::Widget
-        result.new({:resource => resource}).to_html
+        result.new({:object => resource}).to_html
       elsif result.is_a? String
         result
       elsif result.is_a? Hash
-        view(result).new({:resource => resource} << result).to_html
+        view(result).new({:object => resource} << result).to_html
       else
-        view(result).new({:resource => resource, :value => result}).to_html
+        view(result).new({:object => resource, :value => result}).to_html
       end
       h
     end
