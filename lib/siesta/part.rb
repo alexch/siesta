@@ -2,16 +2,16 @@ require 'siesta/application'
 
 # todo: test
 module Siesta
-  class Resource
+  class Part
 
     attr_reader :target # the class or instance that this resource describes
     attr_reader :parts
     attr_accessor :handler_class
-    
+
     def initialize(target, options = {})
       @target = target
       @parts = []
-      @handler_class = options[:handler] || GenericHandler      
+      @handler_class = options[:handler] || GenericHandler
     end
 
     def <<(part_name)
@@ -21,7 +21,7 @@ module Siesta
     def [](part_name)
       if parts.include? part_name
         value = target.send part_name
-        Resource.new(value)
+        Part.new(value)
       end # else nil
     end
 
@@ -35,15 +35,15 @@ module Siesta
 
   end
 
-  # A Resource whose target is a collection (e.g. an ActiveRecord class)
-  class CollectionResource < Resource
+  # A Part whose target is a collection (e.g. an ActiveRecord class)
+  class CollectionPart < Part
     attr_reader :member_resource
-    
+
     def initialize(target)
       super
-      @member_resource = MemberResource.new(self)
+      @member_resource = MemberPart.new(self)
     end
-    
+
     def [](part_name)
       super or begin
         member = target.find part_name
@@ -53,11 +53,11 @@ module Siesta
     end
   end
 
-  # A Resource whose target is a member of a collection (e.g. an ActiveRecord instance)
-  class MemberResource < Resource
-    
+  # A Part whose target is a member of a collection (e.g. an ActiveRecord instance)
+  class MemberPart < Part
+
     attr_reader :parent_resource
-    
+
     def initialize(parent_resource)
       super(nil)
       @parent_resource = parent_resource
@@ -67,7 +67,7 @@ module Siesta
     def path
       "#{parent_resource.path}/#{name}"
     end
-    
+
     def name
       if target.respond_to? :id
         target.id
@@ -75,7 +75,7 @@ module Siesta
         target.object_id
       end
     end
-    
+
     def with_target(target)
       proxy = dup
       proxy.instance_variable_set(:@target, target)

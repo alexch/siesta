@@ -2,12 +2,12 @@ here = File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(here + "/..")
 require "test/test_helper"
 
-require "siesta/resource"
+require "siesta/part"
 require "siesta/resourceful"
 
 module Siesta
-  module ResourceTest
-    describe Resource do
+  module PartTest
+    describe Part do
       class Thing
         include Siesta::Resourceful
 
@@ -27,15 +27,15 @@ module Siesta
         def initialize(id)
           @id = id
         end
-        
+
         def address
           "12 Main St."
         end
-        
+
       end
 
       before do
-        @thing_resource = Resource.new(Thing)
+        @thing_resource = Part.new(Thing)
       end
 
       attr_reader :thing_resource
@@ -50,7 +50,7 @@ module Siesta
         end
 
         it "with a passed-in handler" do
-          resource = Resource.new(Thing, :handler => WidgetHandler)
+          resource = Part.new(Thing, :handler => WidgetHandler)
           assert { resource.handler_class == WidgetHandler }
         end
       end
@@ -63,7 +63,7 @@ module Siesta
         it "adding a string adds a resource for the part's value (method call)" do
           thing_resource << "address"
           assert { thing_resource.parts == ["address"] }
-#          assert { thing_resource["address"].is_a? Resource }
+#          assert { thing_resource["address"].is_a? Part }
 #          assert { thing_resource["address"].value(Thing.new(1)) == "12 Main St." }
         end
       end
@@ -75,13 +75,13 @@ module Siesta
       end
 
       ###
-      describe CollectionResource do
+      describe CollectionPart do
         before do
-          @repo_resource = CollectionResource.new(Thing)
+          @repo_resource = CollectionPart.new(Thing)
         end
 
         it "has a member resource" do
-          assert { @repo_resource.member_resource.is_a? MemberResource }
+          assert { @repo_resource.member_resource.is_a? MemberPart }
         end
 
         it "s member resource has a parent" do
@@ -112,10 +112,10 @@ module Siesta
 
       ###
 
-      describe MemberResource do
+      describe MemberPart do
         describe 'name' do
           it "is the id of the target" do
-            @repo_resource = CollectionResource.new(Thing)
+            @repo_resource = CollectionPart.new(Thing)
             thing_resource = @repo_resource["123"]
             assert { thing_resource.name == "123" }
           end
@@ -123,7 +123,7 @@ module Siesta
 
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
-            @repo_resource = CollectionResource.new(Thing)
+            @repo_resource = CollectionPart.new(Thing)
             master = @repo_resource.member_resource
             assert { master.target.nil? }
             thing = Thing.new(1)

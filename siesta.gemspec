@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.authors   = ["Alex Chaffee"]
   s.email     = "alex@stinky.com"
   s.homepage  = "http://github.com/alexch/siesta"
-  s.summary   = "Siesta takes care of the routing and lets you REST."
+  s.summary   = "Siesta takes care of the routing and lets you do the REST."
   s.description  = <<-EOS.strip
-Got a domain object? Make it a Siesta::Resource and get a well-deserved REST.
+Got a domain object? Make it Siesta::Resourceful and get a well-deserved REST.
   EOS
 
   s.files      = Dir['lib/**/*']

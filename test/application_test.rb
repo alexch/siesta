@@ -128,7 +128,7 @@ module Siesta
         end
       end
 
-      # todo: move this method to Resource?
+      # todo: move this method to Part?
       describe "#path_for" do
         describe "returns the REST path" do
           it "for a class" do

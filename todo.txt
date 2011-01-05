@@ -1,5 +1,5 @@
 
-Make Application be a Resource and unify Part handling
+Make Application be a Part and unify Part handling
 
 * "new" and "edit" as subresources
 ** POST /foo/new -> POST /foo
