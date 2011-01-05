@@ -55,7 +55,7 @@ Definitions:
 
 **action** A part that alters the parent resource, e.g. "/user/12/suspend". (Be sure you really want to do this instead of "POST /user/12/suspension" since the latter is more powerful in the REST paradigm -- it cleanly supports DELETE, properties, etc.)
 
-**target** The particular object (or class) a request is referring to.
+**type** The particular object (or class) a request is referring to.
 
 
 See http://tools.ietf.org/html/rfc5023 and http://en.wikipedia.org/wiki/Representational_State_Transfer#RESTful_web_services for related terminology.

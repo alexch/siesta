@@ -14,6 +14,9 @@ class Hash
   def include_only?(item)
     size == 1 && include?(item)
   end
+
+  alias :<< :merge  # alias shovel to merge
+
 end
 
 class String

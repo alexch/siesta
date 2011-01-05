@@ -4,71 +4,73 @@ require 'siesta/application'
 module Siesta
   class Part
 
-    attr_reader :target # the class or instance that this resource describes
+    attr_reader :type # the type of resource this part describes
+    attr_reader :name
     attr_reader :parts
     attr_accessor :handler_class
 
-    def initialize(target, options = {})
-      @target = target
+    def initialize(type, options = {})
+      @type = type
+      @name = options[:name] || type.name.split('::').last.underscore
       @parts = []
       @handler_class = options[:handler] || GenericHandler
     end
 
-    def <<(part_name)
-      parts << part_name
+    def <<(part)
+      raise ArgumentError, "Part expected but was #{part.inspect}"
+      parts << part
     end
 
     def [](part_name)
       if parts.include? part_name
-        value = target.send part_name
+        value = type.send part_name
         Part.new(value)
       end # else nil
     end
 
-    def name
-      target.name.split('::').last.underscore
-    end
-
-    def value(object)
-	object.send :meh
-    end
-
   end
 
-  # A Part whose target is a collection (e.g. an ActiveRecord class)
-  class CollectionPart < Part
-    attr_reader :member_resource
+  class PropertyPart < Part
+    # todo: allow a part named "foo" to call a method named "bar"
 
-    def initialize(target)
+    # todo: test
+    def value(object)
+  	  object.send self.name
+    end
+  end
+
+  # A Part whose type is a collection (e.g. an ActiveRecord class)
+  class CollectionPart < Part
+    attr_reader :member_part
+
+    def initialize(type)
       super
-      @member_resource = MemberPart.new(self)
+      @member_part = MemberPart.new(type)
     end
 
     def [](part_name)
       super or begin
-        member = target.find part_name
+        member = type.find part_name
         raise NotFound, "#{path}/#{part_name}" if member.nil?
-        member_resource.with_target(member)
+        member_part.with_target(member)
       end
     end
   end
 
-  # A Part whose target is a member of a collection (e.g. an ActiveRecord instance)
+  # A Part whose type is a member of a collection (e.g. an ActiveRecord instance)
   class MemberPart < Part
+    attr_reader :target
 
-    attr_reader :parent_resource
-
-    def initialize(parent_resource)
-      super(nil)
-      @parent_resource = parent_resource
-      @handler = MemberHandler
+    def initialize(type, options = {})
+      super(type, options << {:handler => MemberHandler})
     end
 
     def path
-      "#{parent_resource.path}/#{name}"
+      "#{type.path}/#{name}"
     end
 
-    def name
+    def target_id
+      raise "target is nil" if target.nil?
       if target.respond_to? :id
         target.id
       else
@@ -79,6 +81,7 @@ module Siesta
     def with_target(target)
       proxy = dup
       proxy.instance_variable_set(:@target, target)
+      proxy.instance_variable_set(:@name, proxy.target_id)
       proxy
     end
   end

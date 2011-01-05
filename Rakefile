@@ -7,28 +7,10 @@ task :default => :test
 
 desc 'run all tests (in current ruby)'
 task :test do
-  def separate
-    []
-  end
-#  separate = Dir["./test/adapters/*_test.rb"] + [
-#          "./test/message/test_context_test.rb",
-#          "./test/assert_advanced_test.rb",
-#  ]
-#
-#  all_passed = separate.collect do |test_file|
-#    puts "\n>> Separately running #{test_file} under #{ENV['RUBY_VERSION']}..."
-#    clear_bundler_env
-#    system("ruby #{test_file}")
-#  end.uniq == [true]
-#  if !all_passed
-#    at_exit { exit false }
-#  end
-#
-#  puts "\n>> Running most tests under #{ENV['RUBY_VERSION']}..."
-
+  skip = ENV['SKIP'] || ENV['skip']
   Dir["./test/**/*_test.rb"].each do |test_file|
     begin
-      require test_file unless separate.include?(test_file)
+      require test_file unless skip && /#{skip}/ =~ test_file
     rescue Exception => e
       puts "Exception while requiring #{test_file}: #{e.inspect}"
       raise e

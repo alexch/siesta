@@ -35,76 +35,86 @@ module Siesta
       end
 
       before do
-        @thing_resource = Part.new(Thing)
+        @thing_part = Part.new(Thing)
       end
 
-      attr_reader :thing_resource
+      attr_reader :thing_part
 
       describe 'construction' do
-        it "with a target" do
-          assert { thing_resource.target == Thing }
+        it "with a type" do
+          assert { thing_part.type == Thing }
         end
 
         it "with a default handler" do
-          assert { thing_resource.handler_class == GenericHandler }
+          assert { thing_part.handler_class == GenericHandler }
         end
 
         it "with a passed-in handler" do
-          resource = Part.new(Thing, :handler => WidgetHandler)
-          assert { resource.handler_class == WidgetHandler }
+          part = Part.new(Thing, :handler => WidgetHandler)
+          assert { part.handler_class == WidgetHandler }
+        end
+
+        it "with no name uses the type class name, lowercased" do
+          assert {thing_part.name == "thing"}
+        end
+
+        it "with a name" do
+          part = Part.new(Thing, :name => "stuff")
+          assert {part.name == "stuff"}
         end
       end
 
       describe 'parts' do
         it "is empty at first" do
-          assert { thing_resource.parts.empty? }
+          assert { thing_part.parts.empty? }
         end
-
-        it "adding a string adds a resource for the part's value (method call)" do
-          thing_resource << "address"
-          assert { thing_resource.parts == ["address"] }
-#          assert { thing_resource["address"].is_a? Part }
-#          assert { thing_resource["address"].value(Thing.new(1)) == "12 Main St." }
-        end
+        #
+        # it "adding a string adds a resource for the part's value (method call)" do
+        #   thing_part << "address"
+        #   assert { thing_part.parts == ["address"] }
+#          assert { thing_part["address"].is_a? Part }
+#          assert { thing_part["address"].value(Thing.new(1)) == "12 Main St." }
+        # end
       end
 
       describe '#name' do
-        it "asks the target for its name, minus namespace stuff" do
-          assert {thing_resource.name == "thing"}
+        it "asks the type for its name, minus namespace stuff" do
+          assert {thing_part.name == "thing"}
         end
       end
 
       ###
       describe CollectionPart do
         before do
-          @repo_resource = CollectionPart.new(Thing)
+          @repo_part = CollectionPart.new(Thing)
         end
 
-        it "has a member resource" do
-          assert { @repo_resource.member_resource.is_a? MemberPart }
+        it "has a member part" do
+          assert { @repo_part.member_part.is_a? MemberPart }
         end
 
-        it "s member resource has a parent" do
-          assert { @repo_resource.member_resource.parent_resource == @repo_resource }
+        it "s member part is the same as the collection's" do
+          assert { @repo_part.member_part.type == Thing }
         end
 
-        it "s member resource has no target (yet)" do
-          assert { @repo_resource.member_resource.target.nil? }
+        it "has no target (yet)" do
+          assert { @repo_part.member_part.target == nil }
         end
 
         describe '[]' do
           describe "when there's no matching part" do
-            it "calls #find on the target" do
-              found = @repo_resource["123"]
+            it "calls #find on the type" do
+              found = @repo_part["123"]
               assert  { found }
+              assert  { found.target }
               assert  { found.target.is_a? Thing }
               assert  { found.target.id == "123" }
             end
 
-            it "makes a pseudo-proxy to the collection's member resource" do
+            it "makes a pseudo-proxy to the collection's member part" do
               # How to reliably test this?
-              found = @repo_resource["123"]
-              assert { found.parts == @repo_resource.member_resource.parts }
+              found = @repo_part["123"]
+              assert { found.parts == @repo_part.member_part.parts }
             end
           end
         end
@@ -114,23 +124,24 @@ module Siesta
 
       describe MemberPart do
         describe 'name' do
-          it "is the id of the target" do
-            @repo_resource = CollectionPart.new(Thing)
-            thing_resource = @repo_resource["123"]
-            assert { thing_resource.name == "123" }
+          it "is :id" do
+            @repo_part = CollectionPart.new(Thing)
+            thing_part = @repo_part["123"]
+            assert { thing_part.name == "123" }
           end
         end
 
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
-            @repo_resource = CollectionPart.new(Thing)
-            master = @repo_resource.member_resource
-            assert { master.target.nil? }
+            @repo_part = CollectionPart.new(Thing)
+            master = @repo_part.member_part
+            assert { master.type == Thing }
             thing = Thing.new(1)
             proxy = master.with_target(thing)
-            assert { proxy.target.equal? thing }
-            assert { proxy.parts.equal? master.parts }
-            assert { proxy.parent_resource.equal? master.parent_resource }
+            assert { proxy.target == thing }
+            assert { proxy.type == Thing }
+            assert { proxy.name == 1 }
+            assert { proxy.parts.equal? master.parts } # "equal?" means it's the same instance
           end
         end
       end
