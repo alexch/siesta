@@ -53,7 +53,7 @@ module Siesta
 
       describe '#resources' do
         it "has only the root by default" do
-          assert { @application.resources.include_only? Siesta::WelcomePage }
+          assert { @application.parts.include_only? Siesta::WelcomePage }
         end
       end
       

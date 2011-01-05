@@ -41,13 +41,15 @@ If your Resource is a natural Command, then the standard controller will invoke 
 
 Definitions:
 
-**part** A subresource. For "/admin/user/12", "user" is a part of "admin", and "12" (aka "user 12") is a part of "user".
+**resource** A data object, identified by a URI. We will use only the path and query portions of the URI.
 
-**group** A resource that represents a collection of other resources, all of the same type. e.g. "user" as above. Also known as repository (?)
+**part** A kind of resource. For the path "/admin/user/12", "user" is a part of "admin", and "12" (aka "user 12") is a part of "user". "admin" is part of the root resource (or root part). The terms "part" and "resource" are somewhat interchangable, but strictly speaking, the resource is the actual data, and the part is the kind of resource. So "user 12" is the resource and "user member" is the part.
+
+**collection** A resource that represents a collection of other resources, all of the same type. e.g. "user" as above.
 
 **member** A resource with an id that is strictly an instance of its parent collection resource. e.g. For "/admin/user/12", "user 12" is an item. 
 
-**unique** A resource with no instances, or whose instances have the same path. E.g. a landing page. (Should be "singleton" but that already means something slightly different.) E.g. For "/admin/user/12", "admin" is singular -- there is no such thing as an admin item, just an admin part.
+**unique** A resource with no instances, or whose instances have the same path. E.g. a landing page. (Should be "singleton" but that already means something slightly different.) E.g. For "/admin/user/12", "admin" is singular -- there is no such thing as an admin item, just an admin part. "unique" is the default type of resource.
 
 **perspective** A unitary part that's just a view on its parent resource. E.g. "/user/new" or "/user/12/edit" or "/dashboard/activity/by_date". (Rename to "aspect"?)
 
@@ -55,7 +57,8 @@ Definitions:
 
 **target** The particular object (or class) a request is referring to.
 
-**resource** An abstraction above a target or set of targets.
+
+See http://tools.ietf.org/html/rfc5023 and http://en.wikipedia.org/wiki/Representational_State_Transfer#RESTful_web_services for related terminology.
 
 TODO: Re-read the REST paper to see if he's got better names already.
 

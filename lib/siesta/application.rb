@@ -14,13 +14,13 @@ module Siesta
       @instance = application
     end
 
-    def resources
-      @resources.values
+    def parts
+      @parts.values
     end
 
     def initialize
       require 'siesta/welcome_page'
-      @resources = {"" => Siesta::WelcomePage}
+      @parts = {"" => Siesta::WelcomePage}
     end
 
     ## A Rack application is an Ruby object (not a class) that responds to +call+...
@@ -47,7 +47,7 @@ module Siesta
     end
 
     def root=(resource)
-      @resources[""] = resource
+      @parts[""] = resource
     end
 
     def root
@@ -61,10 +61,10 @@ module Siesta
     def <<(resource)
       path = strip_slashes(path_for(resource))
       if self[path]
-        raise "Path #{path} already mapped" unless @resources[path] == resource
+        raise "Path #{path} already mapped" unless @parts[path] == resource
       else
         log "Registering #{path} => #{resource}"
-        @resources[path] = resource
+        @parts[path] = resource
       end
     end
 
@@ -92,7 +92,7 @@ module Siesta
     end
 
     def [](path)
-      @resources[strip_slashes(path)]
+      @parts[strip_slashes(path)]
     end
     
     def strip_slashes(path)

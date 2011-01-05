@@ -25,7 +25,7 @@ module Siesta
 
         # Maybe this should not actually happen? i.e. require a "resource" macro no matter what
         it "adds the class to the default application" do
-          assert { app.resources.include? Dog }
+          assert { app.parts.include? Dog }
           assert { app["/dog"] == Dog }
         end
 
@@ -35,7 +35,7 @@ module Siesta
               class Poodle < Dog
                 resourceful
               end
-              assert { app.resources.include? Poodle }
+              assert { app.parts.include? Poodle }
               assert { app["poodle"] == Poodle }
             end
 
