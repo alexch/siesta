@@ -43,7 +43,7 @@ module Siesta
       # todo: if redirect, use a standard view
       render result
     end
-    
+
     # todo: test all cases
     def render(result)
       case request.context #todo: split on request.context when finding handler? (polymorphism over switch)
@@ -56,7 +56,7 @@ module Siesta
           raise "Unknown context #{request.context}"
       end
     end
-    
+
     def html(result)
       h = if result.is_a? Erector::Widget
         result.to_html
@@ -71,7 +71,7 @@ module Siesta
       end
       h
     end
-    
+
     def json(result)
       hash = if (result.is_a? Hash or result.is_a? Array)
         result
@@ -82,7 +82,7 @@ module Siesta
       end
       hash.to_json
     end
-    
+
     def view(result)
       constant_named resource.class.name + 'Page' or
       constant_named resource.class.name + 'View' or
@@ -96,7 +96,7 @@ module Siesta
       nil
     end
   end
-  
+
   class GenericView < Erector::Widget
     def content
       pre @resource.pretty_inspect
@@ -109,7 +109,7 @@ module Siesta
     end
   end
 
-  class WidgetHandler < Handler    
+  class WidgetHandler < Handler
     def get
       resource.new(params)
     end
@@ -124,7 +124,7 @@ module Siesta
     def get
       resource.all
     end
-    
+
     def post
       # todo: command pattern
       # todo: error handling
@@ -133,13 +133,13 @@ module Siesta
       response.redirect item.path
     end
   end
-  
+
   class MemberHandler < Handler
-    
+
     def get
       resource
     end
-    
+
     def put
       # todo: command pattern
       # todo: error handling
@@ -147,7 +147,7 @@ module Siesta
       resource.update(params)
       response.redirect resource.path
     end
-    
+
     def delete
       # todo: command pattern
       # todo: error handling
@@ -155,11 +155,11 @@ module Siesta
       resource.destroy
       response.redirect collection.path
     end
-    
+
     def collection
       self.class # override for non-ActiveRecord
     end
-    
+
   end
 
 end
