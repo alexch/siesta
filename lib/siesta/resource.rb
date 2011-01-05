@@ -35,8 +35,8 @@ module Siesta
 
   end
 
-  # A Resource whose target is a repository (e.g. an ActiveRecord class)
-  class RepositoryResource < Resource
+  # A Resource whose target is a collection (e.g. an ActiveRecord class)
+  class CollectionResource < Resource
     attr_reader :member_resource
     
     def initialize(target)
@@ -53,7 +53,7 @@ module Siesta
     end
   end
 
-  # A Resource whose target is a member of a repository (e.g. an ActiveRecord instance)
+  # A Resource whose target is a member of a collection (e.g. an ActiveRecord instance)
   class MemberResource < Resource
     
     attr_reader :parent_resource

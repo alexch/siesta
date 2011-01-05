@@ -51,7 +51,7 @@ module Siesta
         end
       end
 
-      describe '#resources' do
+      describe '#parts' do
         it "has only the root by default" do
           assert { @application.parts.include_only? Siesta::WelcomePage }
         end

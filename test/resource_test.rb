@@ -75,9 +75,9 @@ module Siesta
       end
 
       ###
-      describe RepositoryResource do
+      describe CollectionResource do
         before do
-          @repo_resource = RepositoryResource.new(Thing)
+          @repo_resource = CollectionResource.new(Thing)
         end
 
         it "has a member resource" do
@@ -101,7 +101,7 @@ module Siesta
               assert  { found.target.id == "123" }
             end
 
-            it "makes a pseudo-proxy to the repository's member resource" do
+            it "makes a pseudo-proxy to the collection's member resource" do
               # How to reliably test this?
               found = @repo_resource["123"]
               assert { found.parts == @repo_resource.member_resource.parts }
@@ -115,7 +115,7 @@ module Siesta
       describe MemberResource do
         describe 'name' do
           it "is the id of the target" do
-            @repo_resource = RepositoryResource.new(Thing)
+            @repo_resource = CollectionResource.new(Thing)
             thing_resource = @repo_resource["123"]
             assert { thing_resource.name == "123" }
           end
@@ -123,7 +123,7 @@ module Siesta
 
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
-            @repo_resource = RepositoryResource.new(Thing)
+            @repo_resource = CollectionResource.new(Thing)
             master = @repo_resource.member_resource
             assert { master.target.nil? }
             thing = Thing.new(1)
