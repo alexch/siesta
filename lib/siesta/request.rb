@@ -1,6 +1,8 @@
 require "rack"
-require "siesta/not_found"
 require "active_record"
+
+require "siesta/not_found"
+require "siesta/view/generic"
 
 module Siesta
   class Request < Rack::Request
@@ -136,7 +138,7 @@ module Siesta
     def view(result)
       constant_named resource.class.name + 'Page' or
       constant_named resource.class.name + 'View' or
-      GenericView
+      View::Generic
     end
 
     # todo: move to ext?

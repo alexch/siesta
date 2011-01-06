@@ -1,4 +1,3 @@
-require 'erector'
 
 module Siesta
   # A Handler is like a Controller. It handles client requests.
@@ -9,11 +8,6 @@ module Siesta
 
   end
 
-  class GenericView < Erector::Widget
-    def content
-      pre @resource.pretty_inspect
-    end
-  end
 
   module GenericHandler
     def handle_get(request)
