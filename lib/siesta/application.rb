@@ -26,25 +26,10 @@ module Siesta
     ## A Rack application is a Ruby object (not a class) that responds to +call+...
     def call(env)
       request = Siesta::Request.new(env, self)
-      handle_request(request)
+      request.handle
       status, headers, body = request.finish
       ## ...and returns an Array of exactly three values: status, headers, body
       [status, headers, body]
-    end
-
-    # todo: test
-    # todo: move to request
-    def handle_request(request)
-      resources = request.resources
-      request.resource = resources.last
-      raise NotFound, request.path if request.resource.nil?
-      request.handle
-    rescue NotFound
-      require 'siesta/not_found_page'
-      request.response.status = 404
-      # todo: different error body for JSON vs. HTML
-      request.response.write NotFoundPage.new(:path => request.path).to_html
-      # response.write("#{request.path} not found")
     end
 
     def root=(resource)

@@ -88,10 +88,18 @@ module Siesta
     end
 
     def handle
+      self.resource = resources.last
+      raise NotFound, path if resource.nil?
       result = resource.send "handle_#{verb}", self
       # todo: catch exceptions here and turn them into HTTP errors
       # todo: if redirect, use a standard view
       render result
+    rescue NotFound
+      require 'siesta/not_found_page'
+      response.status = 404
+      # todo: different error body for JSON vs. HTML
+      response.write NotFoundPage.new(:path => path).to_html
+      # response.write("#{request.path} not found")
     end
 
     # todo: extract renderer (takes result)
