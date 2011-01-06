@@ -33,11 +33,12 @@ module Siesta
     end
 
     # todo: test
+    # todo: move to request
     def handle_request(request)
       resources = request.resources
       request.resource = resources.last
       raise NotFound, request.path if request.resource.nil?
-      Handler.new(request).handle
+      request.handle
     rescue NotFound
       require 'siesta/not_found_page'
       request.response.status = 404

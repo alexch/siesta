@@ -45,15 +45,6 @@ module Siesta
           assert { thing_part.type == Thing }
         end
 
-        it "with a default handler" do
-          assert { thing_part.handler_class == GenericHandler }
-        end
-
-        it "with a passed-in handler" do
-          part = Part.new(Thing, :handler => WidgetHandler)
-          assert { part.handler_class == WidgetHandler }
-        end
-
         it "with no name uses the type class name, lowercased" do
           assert {thing_part.name == "thing"}
         end

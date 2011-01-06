@@ -126,15 +126,6 @@ module Siesta
                 assert { Rotweiler.siesta_part.is_a? CollectionPart }
                 deny { Dog.siesta_part.is_a? CollectionPart }
               end
-
-#              it "automatically marks an ActiveRecord object as a collection" do
-#                class Yorkie < ActiveRecord::Base
-#                  include Siesta::Resourceful
-#                  resourceful
-#                end
-#                assert { Yorkie.collection? }
-#                assert { Yorkie.handler(Request.new({}, nil)) == GroupHandler }
-#              end
             end
 
           end

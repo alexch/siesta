@@ -8,14 +8,12 @@ module Siesta
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
     attr_reader :parts
-    attr_accessor :handler_class
 
     def initialize(type, options = {})
       @type = type
       @name = options[:name] || type.name.split('::').last.underscore
       @target = options[:target] || type # todo: test
       @parts = []
-      @handler_class = options[:handler] || GenericHandler
     end
 
     def <<(part)
@@ -101,10 +99,6 @@ module Siesta
 
   # A Part whose type is a member of a collection (e.g. an ActiveRecord instance)
   class MemberPart < Part
-
-    def initialize(type, options = {})
-      super(type, options << {:handler => MemberHandler})
-    end
 
     def path
       "#{type.path}/#{name}"

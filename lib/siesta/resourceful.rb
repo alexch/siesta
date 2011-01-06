@@ -68,14 +68,6 @@ module Siesta
         Application.build_path_for(self) # yuk
       end
 
-      # todo: test
-      def handler(request)
-        @_siesta_handler ||= GenericHandler
-      end
-
-      def handler=(handler_class)
-        @_siesta_handler = handler_class
-      end
     end
 
     # instance methods
