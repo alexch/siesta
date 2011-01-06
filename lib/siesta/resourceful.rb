@@ -33,13 +33,13 @@ module Siesta
 
 
         if flags.include? :view
-          extend WidgetHandler
+          extend Siesta::Handler::Widget
         elsif flags.include? :collection
-          extend CollectionHandler
-          include MemberHandler
+          extend Siesta::Handler::Collection
+          include Siesta::Handler::Member
         else
-          extend GenericHandler
-          include GenericHandler # ???
+          extend Siesta::Handler::Generic
+          include Siesta::Handler::Generic # ???
         end
 
 		    Application.instance << self.siesta_part
