@@ -4,6 +4,7 @@ require "siesta/resourceful"
 module Siesta
   class WelcomePage < Erector::Widgets::Page
     include Siesta::Resourceful
+    resourceful
     def page_title
       "Welcome to Siesta"
     end

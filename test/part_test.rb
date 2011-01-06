@@ -86,25 +86,25 @@ module Siesta
       ###
       describe CollectionPart do
         before do
-          @repo_part = CollectionPart.new(Thing)
+          @collection_part = CollectionPart.new(Thing)
         end
 
         it "has a member part" do
-          assert { @repo_part.member_part.is_a? MemberPart }
+          assert { @collection_part.member_part.is_a? MemberPart }
         end
 
         it "s member part is the same as the collection's" do
-          assert { @repo_part.member_part.type == Thing }
+          assert { @collection_part.member_part.type == Thing }
         end
 
-        it "has no target (yet)" do
-          assert { @repo_part.member_part.target == nil }
+        it "s member part has a target that's the same as the type" do
+          assert { @collection_part.member_part.target == Thing }
         end
 
         describe '[]' do
           describe "when there's no matching part" do
             it "calls #find on the type" do
-              found = @repo_part["123"]
+              found = @collection_part["123"]
               assert  { found }
               assert  { found.target }
               assert  { found.target.is_a? Thing }
@@ -113,8 +113,8 @@ module Siesta
 
             it "makes a pseudo-proxy to the collection's member part" do
               # How to reliably test this?
-              found = @repo_part["123"]
-              assert { found.parts == @repo_part.member_part.parts }
+              found = @collection_part["123"]
+              assert { found.parts == @collection_part.member_part.parts }
             end
           end
         end
@@ -125,16 +125,16 @@ module Siesta
       describe MemberPart do
         describe 'name' do
           it "is :id" do
-            @repo_part = CollectionPart.new(Thing)
-            thing_part = @repo_part["123"]
+            @collection_part = CollectionPart.new(Thing)
+            thing_part = @collection_part["123"]
             assert { thing_part.name == "123" }
           end
         end
 
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
-            @repo_part = CollectionPart.new(Thing)
-            master = @repo_part.member_part
+            @collection_part = CollectionPart.new(Thing)
+            master = @collection_part.member_part
             assert { master.type == Thing }
             thing = Thing.new(1)
             proxy = master.with_target(thing)

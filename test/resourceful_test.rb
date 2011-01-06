@@ -25,8 +25,8 @@ module Siesta
 
         # Maybe this should not actually happen? i.e. require a "resource" macro no matter what
         it "adds the class to the default application" do
-          assert { app.parts.include? Dog }
-          assert { app["/dog"] == Dog }
+          assert { app.parts.include? Dog.siesta_part }
+          assert { app["/dog"] == Dog.siesta_part }
         end
 
         describe "class methods" do
@@ -35,8 +35,8 @@ module Siesta
               class Poodle < Dog
                 resourceful
               end
-              assert { app.parts.include? Poodle }
-              assert { app["poodle"] == Poodle }
+              assert { app.parts.include? Poodle.siesta_part }
+              assert { app["poodle"] == Poodle.siesta_part }
             end
 
             it "gives an error about duplicate paths" do
@@ -59,66 +59,74 @@ module Siesta
               end
               assert { e.nil? }
             end
-            
+
             it "declares part subresources by name" do
               class Greyhound < Dog
                 resourceful
                 part "color"
                 part "size"
               end
-              assert { Greyhound.parts == ["color", "size"] }
-              assert { Dog.parts.empty? }
+              assert do
+                Greyhound.siesta_part.parts == [
+                  PropertyPart.new(Greyhound, :name => "color"),
+                  PropertyPart.new(Greyhound, :name => "size")
+                ]
+              end
+              assert { Dog.siesta_part.parts.empty? }
             end
 
             # it "declares part subresources by type using symbols" do
-            #   # necessary for "forward declarations" in case you want to 
+            #   # necessary for "forward declarations" in case you want to
             #   # declare the parent class before declaring the child class
             #   class SpringerSpaniel < Dog
             #     part :ear
             #   end
             # end
-            
+
             it "declares part subresources for items inside collections" do
               class Whippet < Dog
                 resourceful :collection
                 part "reverse" # this is a part of the Whippet collection
-                item_part "speed" # this is a part of each whippet item (instance)
+                member_part "speed" # this is a part of each whippet item (instance)
               end
-              assert { Whippet.parts == ["reverse"] }
-              assert { Whippet.item_parts == ["speed"] }
+              assert do
+                 Whippet.siesta_part.parts == [PropertyPart.new(Whippet, :name => "reverse")]
+              end
+              assert do
+                 Whippet.siesta_part.member_part.parts == [PropertyPart.new(Whippet, :name => "speed")]
+              end
+
             end
-            
-            it "raises an exception if you try to use item_part in a non-collection" do
+
+            it "raises an exception if you try to use member_part in a non-collection" do
               e = rescuing {
                 class FoxTerrier < Dog
                   resourceful
-                  item_part "speed"
+                  member_part "speed"
                 end
               }
               assert { e }
-              assert { e.message == "undefined method `item_part' for Siesta::ResourcefulTest::FoxTerrier:Class" }
+              assert { e.message =~ /undefined method `member_part'/ }
             end
-            
+
             describe "flags" do
               it ":root makes the class the root resource" do
                 class Pug < Dog
                   resourceful :root
                 end
-                assert { app.root == Pug }
-                assert { app["/"] == Pug }
-                assert("the main path should work as well") { app["/pug"] == Pug }
+                assert { app.root == Pug.siesta_part }
+                assert { app["/"] == Pug.siesta_part }
+                assert("the main path should work as well") { app["/pug"] == Pug.siesta_part }
               end
-              
+
               it "marks the resource as a collection" do
                 class Rotweiler < Dog
                   resourceful :collection
                 end
-                assert { Rotweiler.collection? }
-                deny { Dog.collection? }
-                handler = Rotweiler.handler(Request.new({}, nil))
-                assert { handler == GroupHandler }
+                assert { Rotweiler.siesta_part.is_a? CollectionPart }
+                deny { Dog.siesta_part.is_a? CollectionPart }
               end
-              
+
 #              it "automatically marks an ActiveRecord object as a collection" do
 #                class Yorkie < ActiveRecord::Base
 #                  include Siesta::Resourceful
@@ -127,8 +135,8 @@ module Siesta
 #                assert { Yorkie.collection? }
 #                assert { Yorkie.handler(Request.new({}, nil)) == GroupHandler }
 #              end
-            end            
-            
+            end
+
           end
 
           describe "#path" do

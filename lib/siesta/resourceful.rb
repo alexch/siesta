@@ -1,4 +1,5 @@
 require 'siesta/application'
+require 'siesta/part'
 
 # 'include Siesta::Resourceful' if you want your class to support fun self-declarations
 module Siesta
@@ -8,41 +9,59 @@ module Siesta
     end
 
     module ClassMethods
-      def resourceful(*flags) #todo: add "path" and other parameters        
+      def resourceful(*flags)
+        options = if flags.last.is_a? Hash
+          flags.pop
+        else
+          {}
+        end
+
         if defined? ActiveRecord and ancestors.include?(ActiveRecord::Base) # todo: ActiveModel
           flags << :collection
         end
-        
+
         if ancestors.include?(Erector::Widget)
           flags << :view
         end
-        
-        if flags.include? :root
-          Siesta::Application.instance.root = self
-        end        
 
-        if flags.include? :collection
-          self.send(:extend, GroupMethods)
-          self.send(:include, MemberMethods)
+
+        @_siesta_part = if flags.include? :collection
+          CollectionPart.new(self, options)
+        else
+          Part.new(self, options)
         end
-        
+
+
         if flags.include? :view
-          @_siesta_handler = WidgetHandler
+          extend WidgetHandler
+        elsif flags.include? :collection
+          extend CollectionHandler
+          include MemberHandler
+        else
+          extend GenericHandler
+          include GenericHandler # ???
         end
 
-		Application.instance << self
+		    Application.instance << self.siesta_part
+        if flags.include? :root
+          Siesta::Application.instance.root = self.siesta_part
+        end
       end
 
       def collection?
         false
       end
 
-      def parts
-        @_siesta_parts ||= []
+      def part(name, options = {})
+        @_siesta_part << name  # makes a sub-part. Rename?
       end
 
-      def part(name, options = {})
-        parts << name
+      def member_part(name)
+        @_siesta_part.member_part << name
+      end
+
+      def siesta_part
+        @_siesta_part
       end
 
       def path
@@ -53,41 +72,16 @@ module Siesta
       def handler(request)
         @_siesta_handler ||= GenericHandler
       end
-      
+
       def handler=(handler_class)
         @_siesta_handler = handler_class
       end
     end
-    
-    module GroupMethods
-      def item_parts
-        @_siesta_item_parts ||= []
-      end
-
-      def item_part(name)
-        raise "item_part can only be used for collections" unless collection?
-        item_parts << name
-      end
-      
-      def handler(request)
-        @_siesta_handler ||= GroupHandler
-      end
-      
-      def collection?
-        true
-      end      
-    end
-
-    module MemberMethods
-      def handler(request)
-        @_siesta_handler ||= MemberHandler
-      end
-    end      
 
     # instance methods
     def path
       Application.build_path_for(self)
     end
-    
+
   end
 end

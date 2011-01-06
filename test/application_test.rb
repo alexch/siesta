@@ -53,7 +53,7 @@ module Siesta
 
       describe '#parts' do
         it "has only the root by default" do
-          assert { @application.parts.include_only? Siesta::WelcomePage }
+          assert { @application.parts.include_only? Siesta::WelcomePage.siesta_part }
         end
       end
       
@@ -85,7 +85,7 @@ module Siesta
 
         it "strips leading and trailing slashes" do
           assert { @application["/"] == Siesta::WelcomePage }
-          @application << Dog
+          @application << Part.new(Dog)
           assert { @application["/dog"] == Dog }
           assert { @application["dog/"] == Dog }
           assert { @application["/dog/"] == Dog }
@@ -94,12 +94,12 @@ module Siesta
 
       describe "<<" do
         it "adds a resource, using its natural path" do
-          @application << Dog
+          @application << Part.new(Dog)
           assert { @application["dog"] == Dog }
         end
 
         it "gives an error about duplicate paths" do
-          @application << Dog
+          @application << Part.new(Dog)
           e = rescuing do
             module Another
               class Dog
@@ -111,9 +111,9 @@ module Siesta
         end
 
         it "suppresses duplicate path error if it's the same resource" do
-          @application << Dog
+          @application << Part.new(Dog)
           e = rescuing do
-            @application << Dog
+            @application << Part.new(Dog)
           end
           assert { e.nil? }
         end
@@ -121,10 +121,11 @@ module Siesta
 
       describe "[]" do
         it "looks up a resource for the given path" do
-          assert { @application[""] == Siesta::WelcomePage }
-          assert { @application["/"] == Siesta::WelcomePage }
-          @application << Dog
-          assert { @application["/dog"] == Dog }
+          assert { @application[""] == Siesta::WelcomePage.siesta_part }
+          assert { @application["/"] == Siesta::WelcomePage.siesta_part }
+          @application << Part.new(Dog)
+          assert { @application["/dog"] == Part.new(Dog) }
+          assert { @application["dog"] == Part.new(Dog) }
         end
       end
 

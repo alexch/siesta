@@ -20,10 +20,10 @@ module Siesta
 
     def initialize
       require 'siesta/welcome_page'
-      @parts = {"" => Siesta::WelcomePage}
+      @parts = {"" => Part.new(Siesta::WelcomePage)}
     end
 
-    ## A Rack application is an Ruby object (not a class) that responds to +call+...
+    ## A Rack application is a Ruby object (not a class) that responds to +call+...
     def call(env)
       request = Siesta::Request.new(env, self)
       handle_request(request)
@@ -37,7 +37,7 @@ module Siesta
       resources = request.resources
       request.resource = resources.last
       raise NotFound, request.path if request.resource.nil?
-      Handler.for(request).handle
+      Handler.new(request).handle
     rescue NotFound
       require 'siesta/not_found_page'
       request.response.status = 404
@@ -54,18 +54,35 @@ module Siesta
       self[""]
     end
 
+    def name
+      ""
+    end
+
+    def target
+      nil
+    end
+
+    def type
+      nil
+    end
+
     def log msg
       puts "#{Time.now} - #{msg}" if Siesta::Config.verbose
     end
 
-    def <<(resource)
-      path = strip_slashes(path_for(resource))
+    def <<(part)
+      path = part.name
       if self[path]
-        raise "Path #{path} already mapped" unless @parts[path] == resource
+        raise "Path #{path} already mapped" unless @parts[path] == part
       else
-        log "Registering #{path} => #{resource}"
-        @parts[path] = resource
+        log "Registering #{path} => #{part.type}"
+        @parts[path] = part
       end
+    end
+
+    def ==(other)
+      other.is_a? Application and
+      other.instance_variable_get(:@parts) == @parts
     end
 
     def self.path_for(resource)
@@ -94,7 +111,7 @@ module Siesta
     def [](path)
       @parts[strip_slashes(path)]
     end
-    
+
     def strip_slashes(path)
       path.reverse.chomp("/").reverse.chomp("/")
     end
