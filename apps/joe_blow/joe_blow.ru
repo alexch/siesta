@@ -4,4 +4,4 @@ $: << siesta_lib unless $:.include?(siesta_lib)
 
 require './joe_blow'
 use Rack::ShowExceptions
-run Siesta::Application.instance
+run Siesta::Application.default

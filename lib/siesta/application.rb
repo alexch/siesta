@@ -3,14 +3,17 @@ require 'extlib/mash'
 require 'siesta/config'
 require 'siesta/request'
 require 'siesta/handler'
+require 'siesta/part'
 
 module Siesta
-  class Application
-    def self.instance
+  class Application < Part
+
+    # The default application is a singleton, but you can make one of your own if you want
+    def self.default
       @instance ||= new
     end
 
-    def self.instance=(application)
+    def self.default=(application)
       @instance = application
     end
 
@@ -109,6 +112,6 @@ if $0 == __FILE__
   require 'rack'
   require 'rack/showexceptions'
   Rack::Handler::Thin.run \
-  Rack::ShowExceptions.new(Rack::Lint.new(Rack::MethodOverride.new(Siesta::Application.instance))),
+  Rack::ShowExceptions.new(Rack::Lint.new(Rack::MethodOverride.new(Siesta::Application.default))),
   :Port => 9292
 end

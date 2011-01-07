@@ -8,11 +8,11 @@ module Siesta
   module ResourcefulTest
     describe Resourceful do
       before do
-        @original_instance = Application.instance
+        @original_instance = Application.default
       end
 
       def app
-        Siesta::Application.instance
+        Siesta::Application.default
       end
 
       describe "when included in a class" do
@@ -166,7 +166,7 @@ module Siesta
       end
 
       after do
-        Application.instance = @original_instance
+        Application.default = @original_instance
       end
     end
   end

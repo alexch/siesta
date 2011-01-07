@@ -21,7 +21,7 @@ module Siesta
       require 'rack'
       require 'rack/showexceptions'
 
-      rack_stack = Rack::ShowExceptions.new(Rack::Lint.new(Application.instance))
+      rack_stack = Rack::ShowExceptions.new(Rack::Lint.new(Application.default))
       rack_options = {:Port => port, :daemonize => true}
 
       launched_server = nil

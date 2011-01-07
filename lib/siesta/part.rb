@@ -1,10 +1,8 @@
-require 'siesta/application'
-
 # todo: test
 module Siesta
   class Part
 
-    attr_reader :type # the type of resource this part describes
+    attr_reader :type # the type of resource this part describes (usually a class)
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
     attr_reader :parts

@@ -42,9 +42,9 @@ module Siesta
           include Siesta::Handler::Generic # ???
         end
 
-		    Application.instance << self.siesta_part
+		    Application.default << self.siesta_part
         if flags.include? :root
-          Siesta::Application.instance.root = self.siesta_part
+          Siesta::Application.default.root = self.siesta_part
         end
       end
 
