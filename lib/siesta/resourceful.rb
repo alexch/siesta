@@ -31,7 +31,6 @@ module Siesta
           Part.new(self, options)
         end
 
-
         if flags.include? :view
           extend Siesta::Handler::Widget
         elsif flags.include? :collection
@@ -42,9 +41,9 @@ module Siesta
           include Siesta::Handler::Generic # ???
         end
 
-		    Application.default << self.siesta_part
+		    Application.default << @_siesta_part
         if flags.include? :root
-          Siesta::Application.default.root = self.siesta_part
+          Siesta::Application.default.root = self
         end
       end
 

@@ -4,11 +4,16 @@ require 'siesta/config'
 require 'siesta/request'
 require 'siesta/handler'
 require 'siesta/part'
+require 'siesta/log'
 
 module Siesta
   class Application < Part
+    include Log
 
-    # The default application is a singleton, but you can make one of your own if you want
+    # The default application is a singleton, which contains all
+    # resources at the top level (plus some redundantly at lower
+    # levels). But you can make one of your own if you want fewer
+    # top-level resources.
     def self.default
       @instance ||= new
     end
@@ -17,13 +22,10 @@ module Siesta
       @instance = application
     end
 
-    def parts
-      @parts.values
-    end
-
     def initialize
+      super(nil, :name => "", :target => nil)
       require 'siesta/welcome_page'
-      @parts = {"" => Part.new(Siesta::WelcomePage)}
+      self.root = Siesta::WelcomePage
     end
 
     ## A Rack application is a Ruby object (not a class) that responds to +call+...
@@ -36,42 +38,15 @@ module Siesta
     end
 
     def root=(resource)
-      @parts[""] = resource
+      @target = resource
     end
 
     def root
-      self[""]
-    end
-
-    def name
-      ""
-    end
-
-    def target
-      nil
-    end
-
-    def type
-      nil
-    end
-
-    def log msg
-      puts "#{Time.now} - #{msg}" if Siesta::Config.verbose
-    end
-
-    def <<(part)
-      path = part.name
-      if self[path]
-        raise "Path #{path} already mapped" unless @parts[path] == part
-      else
-        log "Registering #{path} => #{part.type}"
-        @parts[path] = part
-      end
+      @target
     end
 
     def ==(other)
-      other.is_a? Application and
-      other.instance_variable_get(:@parts) == @parts
+      other.is_a? Application and super
     end
 
     def self.path_for(resource)
@@ -95,14 +70,6 @@ module Siesta
     # todo: Is there a cleaner way to proxy this? Maybe use Forwardable.
     def path_for(resource)
       Application.path_for(resource)
-    end
-
-    def [](path)
-      @parts[strip_slashes(path)]
-    end
-
-    def strip_slashes(path)
-      path.reverse.chomp("/").reverse.chomp("/")
     end
 
   end

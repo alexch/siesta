@@ -74,7 +74,7 @@ module Siesta
 
         it "finds the root resource" do
           @request.path_info = "/"
-          assert { @request.resources == [@application.root.target] }
+          assert { @request.resources == [@application.root] }
         end
 
         it "finds the resource corresponding to a single part" do
@@ -119,15 +119,14 @@ module Siesta
           @application << Article.siesta_part
         end
 
-        it "finds the root resource" do
+        it "finds the root resource's part" do
           @request.path_info = "/"
-          assert { @request.parts == [@application.root] }
+          assert { @request.parts == [@application.root.siesta_part] }
         end
 
         it "finds the part for a single named top-level resource" do
           @request.path_info = "/article"
           assert { @request.parts == [
-            @application,
             Article.siesta_part,
             ] }
         end
@@ -135,10 +134,9 @@ module Siesta
         it "finds the part for a member resource" do
           @request.path_info = "/article/123"
           parts = @request.parts
-          assert { parts[0].equal? @application }
-          assert { parts[1] == Article.siesta_part }
+          assert { parts[0] == Article.siesta_part }
           assert {
-            parts[2] == Article.siesta_part.member_part.with_target(Article.new(123))
+            parts[1] == Article.siesta_part.member_part.with_target(Article.new(123))
           }
         end
 
@@ -146,9 +144,8 @@ module Siesta
           it "locates the contained item" do
             @request.path_info = "/article/123"
             parts = @request.parts
-            assert { parts[0].equal? @application }
-            assert { parts[1] == Article.siesta_part }
-            assert { parts[2] == Article.siesta_part.member_part.with_target(Article.new(123)) }
+            assert { parts[0] == Article.siesta_part }
+            assert { parts[1] == Article.siesta_part.member_part.with_target(Article.new(123)) }
           end
 
           it "raises a NotFound error" do
@@ -163,11 +160,10 @@ module Siesta
           it "returns the named part" do
             @request.path_info = "/article/most_popular"
             parts = @request.parts
-            assert { parts[0].equal? @application }
-            assert { parts[1] == Article.siesta_part }
-            assert { parts[2] == Article.siesta_part["most_popular"] }
+            assert { parts[0] == Article.siesta_part }
+            assert { parts[1] == Article.siesta_part["most_popular"] }
             # perhaps PropertyPart type should be the type of the value, not the type of the object the property is on
-            assert { parts[2] == PropertyPart.new(Article, :name => "most_popular") }
+            assert { parts[1] == PropertyPart.new(Article, :name => "most_popular") }
           end
         end
 

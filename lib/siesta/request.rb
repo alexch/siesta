@@ -41,14 +41,14 @@ module Siesta
 
     def parts
       bits = path_bits
-      return [application.root] if bits.empty?
+      return [application.root.siesta_part] if bits.empty?
 
-      parts = [application]
+      parts = []
       current_part = application
       until bits.empty?
         bit = bits.shift
         next_part = current_part[bit]
-        raise NotFound, (parts.map(&:name) << bit).join("/") if next_part.nil?
+        raise NotFound, "/" + (parts.map(&:name) << bit).join("/") if next_part.nil?
         parts << next_part
         current_part = next_part
       end

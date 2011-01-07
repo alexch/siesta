@@ -3,11 +3,14 @@ $: << File.expand_path(here + "/..")
 require "test/test_helper"
 
 require "siesta/application"
+require "siesta/resourceful"
 require "rack/mock"
 
 module Siesta
   module ApplicationTest
     class Dog
+      include Siesta::Resourceful
+      resourceful
     end
 
     describe Application do
@@ -37,44 +40,18 @@ module Siesta
         it "is the Welcome Page by default" do
           assert { @application.root == Siesta::WelcomePage }
         end
-
-        it "is the same as /" do
-          assert { @application.root == @application["/"] }
-        end
       end
 
       describe '#root=' do
         it "changes the root" do
           @application.root = Dog
           assert { @application.root == Dog }
-          assert { @application["/"] == Dog }
         end
       end
 
       describe '#parts' do
-        it "has only the root by default" do
-          assert { @application.parts.include_only? Siesta::WelcomePage.siesta_part }
-        end
-      end
-      
-      describe '#strip_slashes' do
-        it "strips slashes from the beginning" do
-          assert { @application.strip_slashes("/foo") == "foo" }
-        end
-        it "strips slashes from the end" do
-          assert { @application.strip_slashes("/foo") == "foo" }
-        end
-        it "strips slashes from the beginning and the end" do
-          assert { @application.strip_slashes("/foo") == "foo" }
-        end
-        it "works on an empty string" do
-          assert { @application.strip_slashes("") == "" }
-        end
-        it "works on a single slash" do
-          assert { @application.strip_slashes("/") == "" }
-        end
-        it "leaves a normal string alone" do
-          assert { @application.strip_slashes("x/y") == "x/y" }
+        it "has no parts by default" do
+          assert { @application.parts.empty? }
         end
       end
       
@@ -94,8 +71,8 @@ module Siesta
 
       describe "<<" do
         it "adds a resource, using its natural path" do
-          @application << Part.new(Dog)
-          assert { @application["dog"] == Dog }
+          @application << Dog
+          assert { @application["dog"] == Dog.siesta_part }
         end
 
         it "gives an error about duplicate paths" do
@@ -103,6 +80,8 @@ module Siesta
           e = rescuing do
             module Another
               class Dog
+                include Siesta::Resourceful
+                resourceful
               end
             end
             @application << Another::Dog
@@ -111,21 +90,11 @@ module Siesta
         end
 
         it "suppresses duplicate path error if it's the same resource" do
-          @application << Part.new(Dog)
+          @application << Dog
           e = rescuing do
-            @application << Part.new(Dog)
+            @application << Dog
           end
           assert { e.nil? }
-        end
-      end
-
-      describe "[]" do
-        it "looks up a resource for the given path" do
-          assert { @application[""] == Siesta::WelcomePage.siesta_part }
-          assert { @application["/"] == Siesta::WelcomePage.siesta_part }
-          @application << Part.new(Dog)
-          assert { @application["/dog"] == Part.new(Dog) }
-          assert { @application["dog"] == Part.new(Dog) }
         end
       end
 

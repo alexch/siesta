@@ -18,19 +18,34 @@ module Siesta
       if (part.is_a? String) || (part.is_a? Symbol)
         part_name = part
         part = PropertyPart.new(type, :name => part_name)
+      elsif !part.is_a? Part
+        if part.respond_to? :siesta_part
+          part = part.siesta_part  # todo: test
+        else
+          # todo: Test
+          raise ArgumentError, "Expected a Part or a Resourceful, but got #{part.inspect}"
+        end
       end
 
-      raise ArgumentError, "Part expected but was #{part.inspect}" unless part.is_a? Part
-      parts << part
+      if part_named(part.name)
+        raise ArgumentError, "Path /#{part.name} already mapped" unless part_named(part.name).equal?(part)
+      else
+        @parts << part
+      end
     end
 
     def [](part_name)
-      part = parts.detect{|p| p.name == part_name}
+      part = part_named(part_name)
       if part
         # clone the chosen part
         part = part.materialize(:parent_part => self)
       end
       part
+    end
+
+    def part_named(part_name)
+      part_name = part_name.strip_slashes
+      parts.detect{|p| p.name == part_name}
     end
 
     def ==(other)
