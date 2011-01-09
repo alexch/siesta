@@ -3,11 +3,11 @@ require 'extlib/mash'
 require 'siesta/config'
 require 'siesta/request'
 require 'siesta/handler'
-require 'siesta/part'
+require 'siesta/rubric'
 require 'siesta/log'
 
 module Siesta
-  class Application < Part
+  class Application < Rubric
     include Log
 
     # The default application is a singleton, which contains all

@@ -1,5 +1,5 @@
 require 'siesta/application'
-require 'siesta/part'
+require 'siesta/rubric'
 
 # 'include Siesta::Resourceful' if you want your class to support fun self-declarations
 module Siesta
@@ -25,10 +25,10 @@ module Siesta
         end
 
 
-        @_siesta_part = if flags.include? :collection
-          CollectionPart.new(self, options)
+        @_siesta_rubric = if flags.include? :collection
+          CollectionRubric.new(self, options)
         else
-          Part.new(self, options)
+          Rubric.new(self, options)
         end
 
         if flags.include? :view
@@ -41,7 +41,7 @@ module Siesta
           include Siesta::Handler::Generic # ???
         end
 
-		    Application.default << @_siesta_part
+		    Application.default << @_siesta_rubric
         if flags.include? :root
           Siesta::Application.default.root = self
         end
@@ -51,16 +51,16 @@ module Siesta
         false
       end
 
-      def part(name, options = {})
-        @_siesta_part << name  # makes a sub-part. Rename?
+      def rubric(name, options = {})
+        @_siesta_rubric << name  # makes a sub-rubric. Rename?
       end
 
-      def member_part(name)
-        @_siesta_part.member_part << name
+      def member_rubric(name)
+        @_siesta_rubric.member_rubric << name
       end
 
-      def siesta_part
-        @_siesta_part
+      def siesta_rubric
+        @_siesta_rubric
       end
 
       def path

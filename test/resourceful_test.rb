@@ -29,8 +29,8 @@ module Siesta
 
         # Maybe this should not actually happen? i.e. require a "resource" macro no matter what
         it "adds the class to the default application" do
-          assert { app.parts.include? Dog.siesta_part }
-          assert { app["/dog"] == Dog.siesta_part }
+          assert { app.rubrics.include? Dog.siesta_rubric }
+          assert { app["/dog"] == Dog.siesta_rubric }
         end
 
         describe "class methods" do
@@ -39,8 +39,8 @@ module Siesta
               class Poodle < Dog
                 resourceful
               end
-              assert { app.parts.include? Poodle.siesta_part }
-              assert { app["poodle"] == Poodle.siesta_part }
+              assert { app.rubrics.include? Poodle.siesta_rubric }
+              assert { app["poodle"] == Poodle.siesta_rubric }
             end
 
             it "gives an error about duplicate paths" do
@@ -64,53 +64,53 @@ module Siesta
             #   assert { e.nil? }
             # end
 
-            it "declares part subresources by name" do
+            it "declares rubric subresources by name" do
               class Greyhound < Dog
                 resourceful
-                part "color"
-                part "size"
+                rubric "color"
+                rubric "size"
               end
               assert do
-                Greyhound.siesta_part.parts == [
-                  PropertyPart.new(Greyhound, :name => "color"),
-                  PropertyPart.new(Greyhound, :name => "size")
+                Greyhound.siesta_rubric.rubrics == [
+                  PropertyRubric.new(Greyhound, :name => "color"),
+                  PropertyRubric.new(Greyhound, :name => "size")
                 ]
               end
-              assert { Dog.siesta_part.parts.empty? }
+              assert { Dog.siesta_rubric.rubrics.empty? }
             end
 
-            # it "declares part subresources by type using symbols" do
+            # it "declares rubric subresources by type using symbols" do
             #   # necessary for "forward declarations" in case you want to
             #   # declare the parent class before declaring the child class
             #   class SpringerSpaniel < Dog
-            #     part :ear
+            #     rubric :ear
             #   end
             # end
 
-            it "declares part subresources for items inside collections" do
+            it "declares rubric subresources for items inside collections" do
               class Whippet < Dog
                 resourceful :collection
-                part "reverse" # this is a part of the Whippet collection
-                member_part "speed" # this is a part of each whippet item (instance)
+                rubric "reverse" # this is a rubric of the Whippet collection
+                member_rubric "speed" # this is a rubric of each whippet item (instance)
               end
               assert do
-                 Whippet.siesta_part.parts == [PropertyPart.new(Whippet, :name => "reverse")]
+                 Whippet.siesta_rubric.rubrics == [PropertyRubric.new(Whippet, :name => "reverse")]
               end
               assert do
-                 Whippet.siesta_part.member_part.parts == [PropertyPart.new(Whippet, :name => "speed")]
+                 Whippet.siesta_rubric.member_rubric.rubrics == [PropertyRubric.new(Whippet, :name => "speed")]
               end
 
             end
 
-            it "raises an exception if you try to use member_part in a non-collection" do
+            it "raises an exception if you try to use member_rubric in a non-collection" do
               e = rescuing {
                 class FoxTerrier < Dog
                   resourceful
-                  member_part "speed"
+                  member_rubric "speed"
                 end
               }
               assert { e }
-              assert { e.message =~ /undefined method `member_part'/ }
+              assert { e.message =~ /undefined method `member_rubric'/ }
             end
 
             describe "flags" do
@@ -119,15 +119,15 @@ module Siesta
                   resourceful :root
                 end
                 assert { app.root == Pug }
-                assert("the main path should work as well") { app["/pug"] == Pug.siesta_part }
+                assert("the main path should work as well") { app["/pug"] == Pug.siesta_rubric }
               end
 
               it "marks the resource as a collection" do
                 class Rotweiler < Dog
                   resourceful :collection
                 end
-                assert { Rotweiler.siesta_part.is_a? CollectionPart }
-                deny { Dog.siesta_part.is_a? CollectionPart }
+                assert { Rotweiler.siesta_rubric.is_a? CollectionRubric }
+                deny { Dog.siesta_rubric.is_a? CollectionRubric }
               end
             end
 

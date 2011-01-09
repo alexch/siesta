@@ -39,28 +39,28 @@ module Siesta
       path.split("/").map{|part| Rack::Utils.unescape(part) unless part == ""}.compact
     end
 
-    def parts
+    def rubrics
       bits = path_bits
-      return [application.root.siesta_part] if bits.empty?
+      return [application.root.siesta_rubric] if bits.empty?
 
-      parts = []
-      current_part = application
+      rubrics = []
+      current_rubric = application
       until bits.empty?
         bit = bits.shift
-        next_part = current_part[bit]
-        raise NotFound, "/" + (parts.map(&:name) << bit).join("/") if next_part.nil?
-        parts << next_part
-        current_part = next_part
+        next_rubric = current_rubric[bit]
+        raise NotFound, "/" + (rubrics.map(&:name) << bit).join("/") if next_rubric.nil?
+        rubrics << next_rubric
+        current_rubric = next_rubric
       end
-      parts
+      rubrics
     end
 
     def resources
-      parts.map do |part|
-        if part.respond_to?(:target)
-          part.target
-        elsif part.respond_to?(:type)
-          part.type
+      rubrics.map do |rubric|
+        if rubric.respond_to?(:target)
+          rubric.target
+        elsif rubric.respond_to?(:type)
+          rubric.type
         else
           nil
         end

@@ -49,8 +49,8 @@ module Siesta
       class Article < Struct.new(:id)
         include Siesta::Resourceful
         resourceful :collection
-        part "most_popular"
-        member_part "title"
+        rubric "most_popular"
+        member_rubric "title"
 
         def self.find(id)
           id = id.to_i
@@ -69,7 +69,7 @@ module Siesta
       describe '#resources' do
 
         before do
-          @application << Article.siesta_part
+          @application << Article.siesta_rubric
         end
 
         it "finds the root resource" do
@@ -77,12 +77,12 @@ module Siesta
           assert { @request.resources == [@application.root] }
         end
 
-        it "finds the resource corresponding to a single part" do
+        it "finds the resource corresponding to a single rubric" do
           @request.path_info = "/article"
           assert { @request.resources == [Article] }
         end
 
-        it "finds the resources corresponding to the path parts" do
+        it "finds the resources corresponding to the path rubrics" do
           @request.path_info = "/article/123"
           resources = @request.resources
           assert { resources == [Article, Article.new(123)] }
@@ -104,7 +104,7 @@ module Siesta
             assert { e.path == "/article/100" }
           end
 
-          it "returns the named part" do
+          it "returns the named rubric" do
             @request.path_info = "/article/most_popular"
             resources = @request.resources
             assert { resources == [Article, Article.new(99)] }
@@ -113,57 +113,57 @@ module Siesta
 
       end
 
-      describe '#parts' do
+      describe '#rubrics' do
 
         before do
-          @application << Article.siesta_part
+          @application << Article.siesta_rubric
         end
 
-        it "finds the root resource's part" do
+        it "finds the root resource's rubric" do
           @request.path_info = "/"
-          assert { @request.parts == [@application.root.siesta_part] }
+          assert { @request.rubrics == [@application.root.siesta_rubric] }
         end
 
-        it "finds the part for a single named top-level resource" do
+        it "finds the rubric for a single named top-level resource" do
           @request.path_info = "/article"
-          assert { @request.parts == [
-            Article.siesta_part,
+          assert { @request.rubrics == [
+            Article.siesta_rubric,
             ] }
         end
 
-        it "finds the part for a member resource" do
+        it "finds the rubric for a member resource" do
           @request.path_info = "/article/123"
-          parts = @request.parts
-          assert { parts[0] == Article.siesta_part }
+          rubrics = @request.rubrics
+          assert { rubrics[0] == Article.siesta_rubric }
           assert {
-            parts[1] == Article.siesta_part.member_part.with_target(Article.new(123))
+            rubrics[1] == Article.siesta_rubric.member_rubric.with_target(Article.new(123))
           }
         end
 
         describe "for a collection" do
           it "locates the contained item" do
             @request.path_info = "/article/123"
-            parts = @request.parts
-            assert { parts[0] == Article.siesta_part }
-            assert { parts[1] == Article.siesta_part.member_part.with_target(Article.new(123)) }
+            rubrics = @request.rubrics
+            assert { rubrics[0] == Article.siesta_rubric }
+            assert { rubrics[1] == Article.siesta_rubric.member_rubric.with_target(Article.new(123)) }
           end
 
           it "raises a NotFound error" do
             @request.path_info = "/article/100"
             e = rescuing do
-              @request.parts
+              @request.rubrics
             end
             assert { e.is_a? Siesta::NotFound }
             assert { e.path == "/article/100" }
           end
 
-          it "returns the named part" do
+          it "returns the named rubric" do
             @request.path_info = "/article/most_popular"
-            parts = @request.parts
-            assert { parts[0] == Article.siesta_part }
-            assert { parts[1] == Article.siesta_part["most_popular"] }
-            # perhaps PropertyPart type should be the type of the value, not the type of the object the property is on
-            assert { parts[1] == PropertyPart.new(Article, :name => "most_popular") }
+            rubrics = @request.rubrics
+            assert { rubrics[0] == Article.siesta_rubric }
+            assert { rubrics[1] == Article.siesta_rubric["most_popular"] }
+            # perhaps PropertyRubric type should be the type of the value, not the type of the object the property is on
+            assert { rubrics[1] == PropertyRubric.new(Article, :name => "most_popular") }
           end
         end
 

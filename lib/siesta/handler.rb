@@ -56,7 +56,7 @@ module Siesta
         # todo: error handling
         # todo: status message
         destroy
-        collection = request.parts[-2]  # todo: test
+        collection = request.rubrics[-2]  # todo: test
         request.response.redirect collection.path
       end
 
