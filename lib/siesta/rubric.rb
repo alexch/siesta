@@ -5,7 +5,7 @@
 module Siesta
   class Rubric
 
-    attr_reader :type # the type of resource this rubric describes (usually a class)
+    attr_reader :type # the type (class) of resource this rubric describes
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
     attr_reader :rubrics
@@ -22,23 +22,23 @@ module Siesta
         rubric_name = rubric
         rubric = PropertyRubric.new(type, :name => rubric_name)
       elsif !rubric.is_a? Rubric
-        if rubric.respond_to? :siesta_rubric
-          rubric = rubric.siesta_rubric  # todo: test
+        if rubric.respond_to? :rubric
+          rubric = rubric.rubric  # todo: test
         else
           # todo: Test
           raise ArgumentError, "Expected a Rubric or a Resourceful, but got #{rubric.inspect}"
         end
       end
 
-      if rubric_named(rubric.name)
-        raise ArgumentError, "Path /#{rubric.name} already mapped" unless rubric_named(rubric.name).equal?(rubric)
+      if part_named(rubric.name)
+        raise ArgumentError, "Path /#{rubric.name} already mapped" unless part_named(rubric.name).equal?(rubric)
       else
         @rubrics << rubric
       end
     end
 
     def [](rubric_name)
-      rubric = rubric_named(rubric_name)
+      rubric = part_named(rubric_name)
       if rubric
         # clone the chosen rubric
         rubric = rubric.materialize(:parent_rubric => self)
@@ -46,7 +46,11 @@ module Siesta
       rubric
     end
 
-    def rubric_named(rubric_name)
+    def property(name, options = {})
+      self << PropertyRubric.new(type, :name => name)
+    end
+
+    def part_named(rubric_name)
       rubric_name = rubric_name.strip_slashes
       rubrics.detect{|p| p.name == rubric_name}
     end
@@ -97,7 +101,12 @@ module Siesta
 
     def initialize(type, options = {})
       super
+      type.send(:extend, Siesta::Handler::Collection)
+      type.send(:include, Siesta::Handler::Member)
+      self <<(Rubric.new type, :name => "new") # todo: unless options[:no_new]
+
       @member_rubric = MemberRubric.new(type)
+      @member_rubric <<(Rubric.new type, :name => "edit") # todo: unless options[:no_edit]
     end
 
     def [](rubric_name)

@@ -49,8 +49,8 @@ module Siesta
       class Article < Struct.new(:id)
         include Siesta::Resourceful
         resourceful :collection
-        rubric "most_popular"
-        member_rubric "title"
+        property "most_popular"
+        rubric.member_rubric.property "title"
 
         def self.find(id)
           id = id.to_i
@@ -69,7 +69,7 @@ module Siesta
       describe '#resources' do
 
         before do
-          @application << Article.siesta_rubric
+          @application << Article.rubric
         end
 
         it "finds the root resource" do
@@ -116,27 +116,27 @@ module Siesta
       describe '#rubrics' do
 
         before do
-          @application << Article.siesta_rubric
+          @application << Article.rubric
         end
 
         it "finds the root resource's rubric" do
           @request.path_info = "/"
-          assert { @request.rubrics == [@application.root.siesta_rubric] }
+          assert { @request.rubrics == [@application.root.rubric] }
         end
 
         it "finds the rubric for a single named top-level resource" do
           @request.path_info = "/article"
           assert { @request.rubrics == [
-            Article.siesta_rubric,
+            Article.rubric,
             ] }
         end
 
         it "finds the rubric for a member resource" do
           @request.path_info = "/article/123"
           rubrics = @request.rubrics
-          assert { rubrics[0] == Article.siesta_rubric }
+          assert { rubrics[0] == Article.rubric }
           assert {
-            rubrics[1] == Article.siesta_rubric.member_rubric.with_target(Article.new(123))
+            rubrics[1] == Article.rubric.member_rubric.with_target(Article.new(123))
           }
         end
 
@@ -144,8 +144,8 @@ module Siesta
           it "locates the contained item" do
             @request.path_info = "/article/123"
             rubrics = @request.rubrics
-            assert { rubrics[0] == Article.siesta_rubric }
-            assert { rubrics[1] == Article.siesta_rubric.member_rubric.with_target(Article.new(123)) }
+            assert { rubrics[0] == Article.rubric }
+            assert { rubrics[1] == Article.rubric.member_rubric.with_target(Article.new(123)) }
           end
 
           it "raises a NotFound error" do
@@ -160,8 +160,8 @@ module Siesta
           it "returns the named rubric" do
             @request.path_info = "/article/most_popular"
             rubrics = @request.rubrics
-            assert { rubrics[0] == Article.siesta_rubric }
-            assert { rubrics[1] == Article.siesta_rubric["most_popular"] }
+            assert { rubrics[0] == Article.rubric }
+            assert { rubrics[1] == Article.rubric["most_popular"] }
             # perhaps PropertyRubric type should be the type of the value, not the type of the object the property is on
             assert { rubrics[1] == PropertyRubric.new(Article, :name => "most_popular") }
           end

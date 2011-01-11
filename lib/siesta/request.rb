@@ -41,7 +41,7 @@ module Siesta
 
     def rubrics
       bits = path_bits
-      return [application.root.siesta_rubric] if bits.empty?
+      return [application.root.rubric] if bits.empty?
 
       rubrics = []
       current_rubric = application

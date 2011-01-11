@@ -72,7 +72,7 @@ module Siesta
       describe "<<" do
         it "adds a resource, using its natural path" do
           @application << Dog
-          assert { @application["dog"] == Dog.siesta_rubric }
+          assert { @application["dog"] == Dog.rubric }
         end
 
         it "gives an error about duplicate paths" do

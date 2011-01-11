@@ -29,8 +29,8 @@ module Siesta
 
         # Maybe this should not actually happen? i.e. require a "resource" macro no matter what
         it "adds the class to the default application" do
-          assert { app.rubrics.include? Dog.siesta_rubric }
-          assert { app["/dog"] == Dog.siesta_rubric }
+          assert { app.rubrics.include? Dog.rubric }
+          assert { app["/dog"] == Dog.rubric }
         end
 
         describe "class methods" do
@@ -39,8 +39,8 @@ module Siesta
               class Poodle < Dog
                 resourceful
               end
-              assert { app.rubrics.include? Poodle.siesta_rubric }
-              assert { app["poodle"] == Poodle.siesta_rubric }
+              assert { app.rubrics.include? Poodle.rubric }
+              assert { app["poodle"] == Poodle.rubric }
             end
 
             it "gives an error about duplicate paths" do
@@ -67,16 +67,16 @@ module Siesta
             it "declares rubric subresources by name" do
               class Greyhound < Dog
                 resourceful
-                rubric "color"
-                rubric "size"
+                property "color"
+                property "size"
               end
               assert do
-                Greyhound.siesta_rubric.rubrics == [
+                Greyhound.rubric.rubrics == [
                   PropertyRubric.new(Greyhound, :name => "color"),
                   PropertyRubric.new(Greyhound, :name => "size")
                 ]
               end
-              assert { Dog.siesta_rubric.rubrics.empty? }
+              assert { Dog.rubric.rubrics.empty? }
             end
 
             # it "declares rubric subresources by type using symbols" do
@@ -90,14 +90,14 @@ module Siesta
             it "declares rubric subresources for items inside collections" do
               class Whippet < Dog
                 resourceful :collection
-                rubric "reverse" # this is a rubric of the Whippet collection
-                member_rubric "speed" # this is a rubric of each whippet item (instance)
+                property "reverse" # this is a property of the Whippet collection
+                rubric.member_rubric.property "speed" # this is a property of each whippet item (instance)
               end
               assert do
-                 Whippet.siesta_rubric.rubrics == [PropertyRubric.new(Whippet, :name => "reverse")]
+                 Whippet.rubric.rubrics.include? PropertyRubric.new(Whippet, :name => "reverse")
               end
               assert do
-                 Whippet.siesta_rubric.member_rubric.rubrics == [PropertyRubric.new(Whippet, :name => "speed")]
+                 Whippet.rubric.member_rubric.rubrics.include? PropertyRubric.new(Whippet, :name => "speed")
               end
 
             end
@@ -106,7 +106,7 @@ module Siesta
               e = rescuing {
                 class FoxTerrier < Dog
                   resourceful
-                  member_rubric "speed"
+                  rubric.member_rubric.property "speed"
                 end
               }
               assert { e }
@@ -119,15 +119,15 @@ module Siesta
                   resourceful :root
                 end
                 assert { app.root == Pug }
-                assert("the main path should work as well") { app["/pug"] == Pug.siesta_rubric }
+                assert("the main path should work as well") { app["/pug"] == Pug.rubric }
               end
 
               it "marks the resource as a collection" do
                 class Rotweiler < Dog
                   resourceful :collection
                 end
-                assert { Rotweiler.siesta_rubric.is_a? CollectionRubric }
-                deny { Dog.siesta_rubric.is_a? CollectionRubric }
+                assert { Rotweiler.rubric.is_a? CollectionRubric }
+                deny { Dog.rubric.is_a? CollectionRubric }
               end
             end
 

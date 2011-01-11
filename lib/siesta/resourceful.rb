@@ -24,8 +24,7 @@ module Siesta
           flags << :view
         end
 
-
-        @_siesta_rubric = if flags.include? :collection
+        @_rubric = if flags.include? :collection
           CollectionRubric.new(self, options)
         else
           Rubric.new(self, options)
@@ -41,26 +40,22 @@ module Siesta
           include Siesta::Handler::Generic # ???
         end
 
-		    Application.default << @_siesta_rubric
+		    Application.default << @_rubric
         if flags.include? :root
           Siesta::Application.default.root = self
         end
       end
 
-      def collection?
-        false
+      def property(name, options = {})
+        rubric.property(name, options)
       end
 
-      def rubric(name, options = {})
-        @_siesta_rubric << name  # makes a sub-rubric. Rename?
+      def rubric
+        @_rubric
       end
 
-      def member_rubric(name)
-        @_siesta_rubric.member_rubric << name
-      end
-
-      def siesta_rubric
-        @_siesta_rubric
+      def rubric=(r)
+        @_rubric = r
       end
 
       def path
@@ -74,5 +69,10 @@ module Siesta
       Application.build_path_for(self)
     end
 
+    def rubric
+      @rubric ||= self.class.rubric.member_rubric.materialize(:target => self)
+    end
+
   end
+
 end
