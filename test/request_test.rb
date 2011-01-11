@@ -50,7 +50,7 @@ module Siesta
         include Siesta::Resourceful
         resourceful :collection
         property "most_popular"
-        rubric.member_rubric.property "title"
+        rubric.member.property "title"
 
         def self.find(id)
           id = id.to_i
@@ -136,7 +136,7 @@ module Siesta
           rubrics = @request.rubrics
           assert { rubrics[0] == Article.rubric }
           assert {
-            rubrics[1] == Article.rubric.member_rubric.with_target(Article.new(123))
+            rubrics[1] == Article.rubric.member.with_target(Article.new(123))
           }
         end
 
@@ -145,7 +145,7 @@ module Siesta
             @request.path_info = "/article/123"
             rubrics = @request.rubrics
             assert { rubrics[0] == Article.rubric }
-            assert { rubrics[1] == Article.rubric.member_rubric.with_target(Article.new(123)) }
+            assert { rubrics[1] == Article.rubric.member.with_target(Article.new(123)) }
           end
 
           it "raises a NotFound error" do

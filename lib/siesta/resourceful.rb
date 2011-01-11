@@ -70,7 +70,7 @@ module Siesta
     end
 
     def rubric
-      @rubric ||= self.class.rubric.member_rubric.materialize(:target => self)
+      @rubric ||= self.class.rubric.member.materialize(:target => self)
     end
 
   end

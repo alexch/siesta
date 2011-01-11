@@ -91,26 +91,26 @@ module Siesta
               class Whippet < Dog
                 resourceful :collection
                 property "reverse" # this is a property of the Whippet collection
-                rubric.member_rubric.property "speed" # this is a property of each whippet item (instance)
+                rubric.member.property "speed" # this is a property of each whippet item (instance)
               end
               assert do
                  Whippet.rubric.rubrics.include? PropertyRubric.new(Whippet, :name => "reverse")
               end
               assert do
-                 Whippet.rubric.member_rubric.rubrics.include? PropertyRubric.new(Whippet, :name => "speed")
+                 Whippet.rubric.member.rubrics.include? PropertyRubric.new(Whippet, :name => "speed")
               end
 
             end
 
-            it "raises an exception if you try to use member_rubric in a non-collection" do
+            it "raises an exception if you try to use member in a non-collection" do
               e = rescuing {
                 class FoxTerrier < Dog
                   resourceful
-                  rubric.member_rubric.property "speed"
+                  rubric.member.property "speed"
                 end
               }
               assert { e }
-              assert { e.message =~ /undefined method `member_rubric'/ }
+              assert { e.message =~ /undefined method `member'/ }
             end
 
             describe "flags" do

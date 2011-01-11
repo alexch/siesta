@@ -81,15 +81,15 @@ module Siesta
         end
 
         it "has a member rubric" do
-          assert { @collection_rubric.member_rubric.is_a? MemberRubric }
+          assert { @collection_rubric.member.is_a? MemberRubric }
         end
 
         it "s member rubric is the same as the collection's" do
-          assert { @collection_rubric.member_rubric.type == Thing }
+          assert { @collection_rubric.member.type == Thing }
         end
 
         it "s member rubric has a target that's the same as the type" do
-          assert { @collection_rubric.member_rubric.target == Thing }
+          assert { @collection_rubric.member.target == Thing }
         end
 
         describe '[]' do
@@ -105,7 +105,7 @@ module Siesta
             it "makes a pseudo-proxy to the collection's member rubric" do
               # How to reliably test this?
               found = @collection_rubric["123"]
-              assert { found.rubrics == @collection_rubric.member_rubric.rubrics }
+              assert { found.rubrics == @collection_rubric.member.rubrics }
             end
           end
         end
@@ -125,7 +125,7 @@ module Siesta
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
             @collection_rubric = CollectionRubric.new(Thing)
-            master = @collection_rubric.member_rubric
+            master = @collection_rubric.member
             assert { master.type == Thing }
             thing = Thing.new(1)
             proxy = master.with_target(thing)

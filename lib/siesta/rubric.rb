@@ -97,7 +97,7 @@ module Siesta
 
   # A Rubric whose type is a collection (e.g. an ActiveRecord class)
   class CollectionRubric < Rubric
-    attr_reader :member_rubric
+    attr_reader :member
 
     def initialize(type, options = {})
       super
@@ -105,19 +105,19 @@ module Siesta
       type.send(:include, Siesta::Handler::Member)
       self <<(Rubric.new type, :name => "new") # todo: unless options[:no_new]
 
-      @member_rubric = MemberRubric.new(type)
-      @member_rubric <<(Rubric.new type, :name => "edit") # todo: unless options[:no_edit]
+      @member = MemberRubric.new(type)
+      @member <<(Rubric.new type, :name => "edit") # todo: unless options[:no_edit]
     end
 
     def [](rubric_name)
       super or begin
-        member = begin
+        instance = begin
           type.find rubric_name
         rescue ActiveRecord::RecordNotFound
           nil
         end
-        return nil if member.nil?
-        member_rubric.with_target(member)
+        return nil if instance.nil?
+        member.with_target(instance)
       end
     end
   end
