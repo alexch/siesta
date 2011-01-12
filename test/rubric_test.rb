@@ -57,12 +57,12 @@ module Siesta
 
       describe 'rubrics' do
         it "is empty at first" do
-          assert { thing_rubric.rubrics.empty? }
+          assert { thing_rubric.parts.empty? }
         end
         #
         # it "adding a string adds a resource for the rubric's value (method call)" do
         #   thing_rubric << "address"
-        #   assert { thing_rubric.rubrics == ["address"] }
+        #   assert { thing_rubric.parts == ["address"] }
 #          assert { thing_rubric["address"].is_a? Rubric }
 #          assert { thing_rubric["address"].value(Thing.new(1)) == "12 Main St." }
         # end
@@ -105,7 +105,7 @@ module Siesta
             it "makes a pseudo-proxy to the collection's member rubric" do
               # How to reliably test this?
               found = @collection_rubric["123"]
-              assert { found.rubrics == @collection_rubric.member.rubrics }
+              assert { found.parts == @collection_rubric.member.parts }
             end
           end
         end
@@ -132,7 +132,7 @@ module Siesta
             assert { proxy.target == thing }
             assert { proxy.type == Thing }
             assert { proxy.name == 1 }
-            assert { proxy.rubrics.equal? master.rubrics } # "equal?" means it's the same instance
+            assert { proxy.parts.equal? master.parts } # "equal?" means it's the same instance
           end
         end
       end

@@ -51,7 +51,7 @@ module Siesta
 
       describe '#rubrics' do
         it "has no rubrics by default" do
-          assert { @application.rubrics.empty? }
+          assert { @application.parts.empty? }
         end
       end
       

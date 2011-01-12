@@ -8,13 +8,13 @@ module Siesta
     attr_reader :type # the type (class) of resource this rubric describes
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
-    attr_reader :rubrics
+    attr_reader :parts
 
     def initialize(type, options = {})
       @type = type
       @name = options[:name] || type.name.split('::').last.underscore
       @target = options[:target] || type # todo: test
-      @rubrics = []
+      @parts = []
     end
 
     def <<(rubric)
@@ -33,7 +33,7 @@ module Siesta
       if part_named(rubric.name)
         raise ArgumentError, "Path /#{rubric.name} already mapped" unless part_named(rubric.name).equal?(rubric)
       else
-        @rubrics << rubric
+        @parts << rubric
       end
     end
 
@@ -52,14 +52,14 @@ module Siesta
 
     def part_named(rubric_name)
       rubric_name = rubric_name.strip_slashes
-      rubrics.detect{|p| p.name == rubric_name}
+      parts.detect{|p| p.name == rubric_name}
     end
 
     def ==(other)
       other.is_a? Rubric and
       @type == other.type and
       @name == other.name and
-      @rubrics == other.rubrics
+      @parts == other.parts
     end
 
     def path

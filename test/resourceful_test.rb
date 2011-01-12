@@ -29,7 +29,7 @@ module Siesta
 
         # Maybe this should not actually happen? i.e. require a "resource" macro no matter what
         it "adds the class to the default application" do
-          assert { app.rubrics.include? Dog.rubric }
+          assert { app.parts.include? Dog.rubric }
           assert { app["/dog"] == Dog.rubric }
         end
 
@@ -39,7 +39,7 @@ module Siesta
               class Poodle < Dog
                 resourceful
               end
-              assert { app.rubrics.include? Poodle.rubric }
+              assert { app.parts.include? Poodle.rubric }
               assert { app["poodle"] == Poodle.rubric }
             end
 
@@ -71,12 +71,12 @@ module Siesta
                 property "size"
               end
               assert do
-                Greyhound.rubric.rubrics == [
+                Greyhound.rubric.parts == [
                   Property.new(Greyhound, :name => "color"),
                   Property.new(Greyhound, :name => "size")
                 ]
               end
-              assert { Dog.rubric.rubrics.empty? }
+              assert { Dog.rubric.parts.empty? }
             end
 
             # it "declares rubric subresources by type using symbols" do
@@ -94,10 +94,10 @@ module Siesta
                 rubric.member.property "speed" # this is a property of each whippet item (instance)
               end
               assert do
-                 Whippet.rubric.rubrics.include? Property.new(Whippet, :name => "reverse")
+                 Whippet.rubric.parts.include? Property.new(Whippet, :name => "reverse")
               end
               assert do
-                 Whippet.rubric.member.rubrics.include? Property.new(Whippet, :name => "speed")
+                 Whippet.rubric.member.parts.include? Property.new(Whippet, :name => "speed")
               end
 
             end
