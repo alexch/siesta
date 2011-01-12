@@ -19,22 +19,23 @@ module Siesta
         Siesta::Application.default
       end
 
-      describe "when included in a class" do
+      describe "when included in a base class" do
         before do
           class Dog
             include Siesta::Resourceful
-            resourceful
           end
         end
 
-        # Maybe this should not actually happen? i.e. require a "resource" macro no matter what
-        it "adds the class to the default application" do
-          assert { app.parts.include? Dog.rubric }
-          assert { app["/dog"] == Dog.rubric }
+        it "does not add the class to the default application" do
+          deny { app.parts.include? Dog.rubric }
+        end
+
+        it "does not give the base class a rubric" do
+          assert { Dog.rubric.nil? or Dog.rubric.parts.empty? }
         end
 
         describe "class methods" do
-          describe "#resource" do
+          describe "#resourceful" do
             it "adds the class to the default application" do
               class Poodle < Dog
                 resourceful
@@ -45,7 +46,13 @@ module Siesta
 
             it "gives an error about duplicate paths" do
               e = rescuing do
-                module Another
+                module One
+                  class Dog
+                    include Siesta::Resourceful
+                    resourceful
+                  end
+                end
+                module Two
                   class Dog
                     include Siesta::Resourceful
                     resourceful
@@ -76,7 +83,6 @@ module Siesta
                   Property.new(Greyhound, :name => "size")
                 ]
               end
-              assert { Dog.rubric.parts.empty? }
             end
 
             # it "declares rubric subresources by type using symbols" do
