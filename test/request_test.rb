@@ -162,8 +162,8 @@ module Siesta
             rubrics = @request.rubrics
             assert { rubrics[0] == Article.rubric }
             assert { rubrics[1] == Article.rubric["most_popular"] }
-            # perhaps PropertyRubric type should be the type of the value, not the type of the object the property is on
-            assert { rubrics[1] == PropertyRubric.new(Article, :name => "most_popular") }
+            # perhaps Property type should be the type of the value, not the type of the object the property is on
+            assert { rubrics[1] == Property.new(Article, :name => "most_popular") }
           end
         end
 

@@ -75,13 +75,13 @@ module Siesta
       end
 
       ###
-      describe CollectionRubric do
+      describe Collection do
         before do
-          @collection_rubric = CollectionRubric.new(Thing)
+          @collection_rubric = Collection.new(Thing)
         end
 
         it "has a member rubric" do
-          assert { @collection_rubric.member.is_a? MemberRubric }
+          assert { @collection_rubric.member.is_a? Member }
         end
 
         it "s member rubric is the same as the collection's" do
@@ -113,10 +113,10 @@ module Siesta
 
       ###
 
-      describe MemberRubric do
+      describe Member do
         describe 'name' do
           it "is :id" do
-            @collection_rubric = CollectionRubric.new(Thing)
+            @collection_rubric = Collection.new(Thing)
             thing_rubric = @collection_rubric["123"]
             assert { thing_rubric.name == "123" }
           end
@@ -124,7 +124,7 @@ module Siesta
 
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
-            @collection_rubric = CollectionRubric.new(Thing)
+            @collection_rubric = Collection.new(Thing)
             master = @collection_rubric.member
             assert { master.type == Thing }
             thing = Thing.new(1)

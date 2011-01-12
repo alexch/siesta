@@ -20,7 +20,7 @@ module Siesta
     def <<(rubric)
       if (rubric.is_a? String) || (rubric.is_a? Symbol)
         rubric_name = rubric
-        rubric = PropertyRubric.new(type, :name => rubric_name)
+        rubric = Property.new(type, :name => rubric_name)
       elsif !rubric.is_a? Rubric
         if rubric.respond_to? :rubric
           rubric = rubric.rubric  # todo: test
@@ -47,7 +47,7 @@ module Siesta
     end
 
     def property(name, options = {})
-      self << PropertyRubric.new(type, :name => name)
+      self << Property.new(type, :name => name)
     end
 
     def part_named(rubric_name)
@@ -81,73 +81,11 @@ module Siesta
       @target = options[:target] if options[:target]
       @name = options[:name] if options[:name]
     end
-
-  end
-
-  class PropertyRubric < Rubric
-    # todo: allow a rubric named "foo" to call a method named "bar"
-
-    # todo: test
-    def materialized(options)
-      super
-      value = options[:parent_rubric].target.send self.name
-      @target = value
-    end
-  end
-
-  # A Rubric whose type is a collection (e.g. an ActiveRecord class)
-  class CollectionRubric < Rubric
-    attr_reader :member
-
-    def initialize(type, options = {})
-      super
-      type.send(:extend, Siesta::Handler::Collection)
-      type.send(:include, Siesta::Handler::Member)
-      self <<(Rubric.new type, :name => "new") # todo: unless options[:no_new]
-
-      @member = MemberRubric.new(type)
-      @member <<(Rubric.new type, :name => "edit") # todo: unless options[:no_edit]
-    end
-
-    def [](rubric_name)
-      super or begin
-        instance = begin
-          type.find rubric_name
-        rescue ActiveRecord::RecordNotFound
-          nil
-        end
-        return nil if instance.nil?
-        member.with_target(instance)
-      end
-    end
-  end
-
-  # A Rubric whose type is a member of a collection (e.g. an ActiveRecord instance)
-  class MemberRubric < Rubric
-
-    def path
-      "#{type.path}/#{name}"
-    end
-
-    def target_id
-      raise "target is nil" if target.nil?
-      if target.respond_to? :id
-        target.id
-      else
-        target.object_id
-      end
-    end
-
-    def rename
-      @name = target_id
-    end
-
-    def with_target(target)
-      proxy = super
-      proxy.rename
-      proxy
-    end
-
   end
 
 end
+
+
+require 'siesta/property'
+require 'siesta/collection'
+require 'siesta/member'

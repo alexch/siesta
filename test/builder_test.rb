@@ -31,7 +31,7 @@ module Siesta
 
         it "makes a collection rubric" do
           assert { A.rubric }
-          assert { A.rubric.is_a? CollectionRubric }
+          assert { A.rubric.is_a? Collection }
           assert { A.rubric.type == A }
         end
 

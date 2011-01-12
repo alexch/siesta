@@ -25,7 +25,7 @@ module Siesta
         end
 
         @_rubric = if flags.include? :collection
-          CollectionRubric.new(self, options)
+          Collection.new(self, options)
         else
           Rubric.new(self, options)
         end

@@ -72,8 +72,8 @@ module Siesta
               end
               assert do
                 Greyhound.rubric.rubrics == [
-                  PropertyRubric.new(Greyhound, :name => "color"),
-                  PropertyRubric.new(Greyhound, :name => "size")
+                  Property.new(Greyhound, :name => "color"),
+                  Property.new(Greyhound, :name => "size")
                 ]
               end
               assert { Dog.rubric.rubrics.empty? }
@@ -94,10 +94,10 @@ module Siesta
                 rubric.member.property "speed" # this is a property of each whippet item (instance)
               end
               assert do
-                 Whippet.rubric.rubrics.include? PropertyRubric.new(Whippet, :name => "reverse")
+                 Whippet.rubric.rubrics.include? Property.new(Whippet, :name => "reverse")
               end
               assert do
-                 Whippet.rubric.member.rubrics.include? PropertyRubric.new(Whippet, :name => "speed")
+                 Whippet.rubric.member.rubrics.include? Property.new(Whippet, :name => "speed")
               end
 
             end
@@ -126,8 +126,8 @@ module Siesta
                 class Rotweiler < Dog
                   resourceful :collection
                 end
-                assert { Rotweiler.rubric.is_a? CollectionRubric }
-                deny { Dog.rubric.is_a? CollectionRubric }
+                assert { Rotweiler.rubric.is_a? Collection }
+                deny { Dog.rubric.is_a? Collection }
               end
             end
 

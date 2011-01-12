@@ -13,7 +13,7 @@ module Siesta
 
       type.send(:include, Resourceful)
       type.rubric = if flags.include? :collection
-        CollectionRubric.new(type, options)
+        Collection.new(type, options)
       else
         Rubric.new(type, options)
       end
