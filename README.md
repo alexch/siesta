@@ -15,9 +15,9 @@ Rails requires routes to be defined in a separate file from the controller. This
 
 Sinatra routes are mere strings, and controllers (or handlers) are blocks defined next to those strings. This makes the linkage between routes and controllers very clear, but still has some limitations, notably that controllers are not objects, or even methods, and Sinatra apps are difficult to decompose. This means Sinatra apps have a ceiling of, say, a dozen or so routes before they get cumbersome and complex.
 
-Siesta allows any object at all -- a Model, a View, or any arbitrary object -- to declare itself a Resource (or subresource). Siesta then automatically routes the correct URL path to it.
+Siesta allows any object at all -- a Model, a View, or any arbitrary object -- to declare itself to be Resourceful. Siesta then automatically routes the correct URL path to it.
 
-Paths are based on the resource's class name, but can be overridden or added.
+Paths are based on the resource target's class name, but can be overridden or added.
 
 ## Flexible Layering
 

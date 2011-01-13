@@ -36,11 +36,11 @@ module Siesta
           assert { A.ancestors.include? Siesta::Resourceful }
         end
 
-        it "gives its parameter a rubric" do
+        it "gives its parameter a resource" do
           Resourceful.build(A)
-          assert { A.rubric }
-          assert { A.rubric.is_a? Rubric }
-          assert { A.rubric.type == A }
+          assert { A.resource }
+          assert { A.resource.is_a? Resource }
+          assert { A.resource.type == A }
         end
 
         describe "with the :collection flag" do
@@ -48,10 +48,10 @@ module Siesta
             Resourceful.build(A, :collection)
           end
 
-          it "makes a collection rubric" do
-            assert { A.rubric }
-            assert { A.rubric.is_a? Collection }
-            assert { A.rubric.type == A }
+          it "makes a collection resource" do
+            assert { A.resource }
+            assert { A.resource.is_a? Collection }
+            assert { A.resource.type == A }
           end
 
           # todo: make these be tests of Collection
@@ -64,26 +64,26 @@ module Siesta
             assert { A.new.is_a? Siesta::Member::Handler }
           end
 
-          it "gives the type's instance a rubric" do
+          it "gives the type's instance a resource" do
             a = A.new
-            rubric = a.rubric
-            assert { rubric }
-            assert { rubric.type == A }
-            assert { rubric.target == a }
+            resource = a.resource
+            assert { resource }
+            assert { resource.type == A }
+            assert { resource.target == a }
           end
 
           it "gives the type's class a 'new' part" do
-            rubric = A.rubric.part_named("new")
-            deny { rubric.nil? }
-            assert { rubric.type == A::New }
-            assert { rubric.target == A }
+            resource = A.resource.part_named("new")
+            deny { resource.nil? }
+            assert { resource.type == A::New }
+            assert { resource.target == A }
           end
 
           it "gives the type's instance an 'edit' part" do
             a = A.new
-            rubric = a.rubric.part_named("edit")
-            deny { rubric.nil? }
-            assert { rubric.type == A::Edit }
+            resource = a.resource.part_named("edit")
+            deny { resource.nil? }
+            assert { resource.type == A::Edit }
           end
 
         end
@@ -99,11 +99,11 @@ module Siesta
         end
 
         it "does not add the class to the default application" do
-          deny { app.parts.include? Dog.rubric }
+          deny { app.parts.include? Dog.resource }
         end
 
-        it "does not give the base class a rubric" do
-          assert { Dog.rubric.nil? or Dog.rubric.parts.empty? }
+        it "does not give the base class a resource" do
+          assert { Dog.resource.nil? or Dog.resource.parts.empty? }
         end
 
         describe "class methods" do
@@ -112,8 +112,8 @@ module Siesta
               class Poodle < Dog
                 resourceful
               end
-              assert { app.parts.include? Poodle.rubric }
-              assert { app["poodle"] == Poodle.rubric }
+              assert { app.parts.include? Poodle.resource }
+              assert { app["poodle"] == Poodle.resource }
             end
 
             it "gives an error about duplicate paths" do
@@ -143,39 +143,39 @@ module Siesta
             #   assert { e.nil? }
             # end
 
-            it "declares rubric subresources by name" do
+            it "declares resource subresources by name" do
               class Greyhound < Dog
                 resourceful
                 property "color"
                 property "size"
               end
               assert do
-                Greyhound.rubric.parts == [
+                Greyhound.resource.parts == [
                   Property.new(Greyhound, :name => "color"),
                   Property.new(Greyhound, :name => "size")
                 ]
               end
             end
 
-            # it "declares rubric subresources by type using symbols" do
+            # it "declares resource subresources by type using symbols" do
             #   # necessary for "forward declarations" in case you want to
             #   # declare the parent class before declaring the child class
             #   class SpringerSpaniel < Dog
-            #     rubric :ear
+            #     resource :ear
             #   end
             # end
 
-            it "declares rubric subresources for items inside collections" do
+            it "declares resource subresources for items inside collections" do
               class Whippet < Dog
                 resourceful :collection
                 property "reverse" # this is a property of the Whippet collection
-                rubric.member.property "speed" # this is a property of each whippet item (instance)
+                resource.member.property "speed" # this is a property of each whippet item (instance)
               end
               assert do
-                 Whippet.rubric.parts.include? Property.new(Whippet, :name => "reverse")
+                 Whippet.resource.parts.include? Property.new(Whippet, :name => "reverse")
               end
               assert do
-                 Whippet.rubric.member.parts.include? Property.new(Whippet, :name => "speed")
+                 Whippet.resource.member.parts.include? Property.new(Whippet, :name => "speed")
               end
 
             end
@@ -184,7 +184,7 @@ module Siesta
               e = rescuing {
                 class FoxTerrier < Dog
                   resourceful
-                  rubric.member.property "speed"
+                  resource.member.property "speed"
                 end
               }
               assert { e }
@@ -197,15 +197,15 @@ module Siesta
                   resourceful :root
                 end
                 assert { app.root == Pug }
-                assert("the main path should work as well") { app["/pug"] == Pug.rubric }
+                assert("the main path should work as well") { app["/pug"] == Pug.resource }
               end
 
               it "marks the resource as a collection" do
                 class Rotweiler < Dog
                   resourceful :collection
                 end
-                assert { Rotweiler.rubric.is_a? Collection }
-                deny { Dog.rubric.is_a? Collection }
+                assert { Rotweiler.resource.is_a? Collection }
+                deny { Dog.resource.is_a? Collection }
               end
             end
 

@@ -5,6 +5,8 @@ require "siesta/not_found"
 require "siesta/view/generic"
 
 module Siesta
+
+  # I could call this a "communication" and then more cleanly encapsulate the Rack::Request, and remove the weird feeling when you say "request.response", but for now I like not having to proxy useful request methods like "params".
   class Request < Rack::Request
     attr_accessor :target, :application, :response
 
@@ -39,26 +41,26 @@ module Siesta
       path.split("/").map{|part| Rack::Utils.unescape(part) unless part == ""}.compact
     end
 
-    def rubrics
+    def resources
       bits = path_bits
-      return [application.root.rubric] if bits.empty?
+      return [application.root.resource] if bits.empty?
 
-      rubrics = []
-      current_rubric = application
+      resources = []
+      current_resource = application
       until bits.empty?
         bit = bits.shift
-        next_rubric = current_rubric[bit]
-        raise NotFound, "/" + (rubrics.map(&:name) << bit).join("/") if next_rubric.nil?
-        rubrics << next_rubric
-        current_rubric = next_rubric
+        next_resource = current_resource[bit]
+        raise NotFound, "/" + (resources.map(&:name) << bit).join("/") if next_resource.nil?
+        resources << next_resource
+        current_resource = next_resource
       end
-      rubrics
+      resources
     end
 
     def targets
-      rubrics.map do |rubric|
-        rubric.target or
-        rubric.type
+      resources.map do |resource|
+        resource.target or
+        resource.type
       end.compact
     end
 

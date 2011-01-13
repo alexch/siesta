@@ -50,7 +50,7 @@ module Siesta
         include Siesta::Resourceful
         resourceful :collection
         property "most_popular"
-        rubric.member.property "title"
+        resource.member.property "title"
 
         def self.find(id)
           id = id.to_i
@@ -69,7 +69,7 @@ module Siesta
       describe '#targets' do
 
         before do
-          @application << Article.rubric
+          @application << Article.resource
         end
 
         it "finds the root resource" do
@@ -77,12 +77,12 @@ module Siesta
           assert { @request.targets == [@application.root] }
         end
 
-        it "finds the resource corresponding to a single rubric" do
+        it "finds the resource corresponding to a single resource" do
           @request.path_info = "/article"
           assert { @request.targets == [Article] }
         end
 
-        it "finds the targets corresponding to the path rubrics" do
+        it "finds the targets corresponding to the path resources" do
           @request.path_info = "/article/123"
           targets = @request.targets
           assert { targets == [Article, Article.new(123)] }
@@ -104,7 +104,7 @@ module Siesta
             assert { e.path == "/article/100" }
           end
 
-          it "returns the named rubric" do
+          it "returns the named resource" do
             @request.path_info = "/article/most_popular"
             targets = @request.targets
             assert { targets == [Article, Article.new(99)] }
@@ -113,57 +113,57 @@ module Siesta
 
       end
 
-      describe '#rubrics' do
+      describe '#resources' do
 
         before do
-          @application << Article.rubric
+          @application << Article.resource
         end
 
-        it "finds the root resource's rubric" do
+        it "finds the root resource's resource" do
           @request.path_info = "/"
-          assert { @request.rubrics == [@application.root.rubric] }
+          assert { @request.resources == [@application.root.resource] }
         end
 
-        it "finds the rubric for a single named top-level resource" do
+        it "finds the resource for a single named top-level resource" do
           @request.path_info = "/article"
-          assert { @request.rubrics == [
-            Article.rubric,
+          assert { @request.resources == [
+            Article.resource,
             ] }
         end
 
-        it "finds the rubric for a member resource" do
+        it "finds the resource for a member resource" do
           @request.path_info = "/article/123"
-          rubrics = @request.rubrics
-          assert { rubrics[0] == Article.rubric }
+          resources = @request.resources
+          assert { resources[0] == Article.resource }
           assert {
-            rubrics[1] == Article.rubric.member.with_target(Article.new(123))
+            resources[1] == Article.resource.member.with_target(Article.new(123))
           }
         end
 
         describe "for a collection" do
           it "locates the contained item" do
             @request.path_info = "/article/123"
-            rubrics = @request.rubrics
-            assert { rubrics[0] == Article.rubric }
-            assert { rubrics[1] == Article.rubric.member.with_target(Article.new(123)) }
+            resources = @request.resources
+            assert { resources[0] == Article.resource }
+            assert { resources[1] == Article.resource.member.with_target(Article.new(123)) }
           end
 
           it "raises a NotFound error" do
             @request.path_info = "/article/100"
             e = rescuing do
-              @request.rubrics
+              @request.resources
             end
             assert { e.is_a? Siesta::NotFound }
             assert { e.path == "/article/100" }
           end
 
-          it "returns the named rubric" do
+          it "returns the named resource" do
             @request.path_info = "/article/most_popular"
-            rubrics = @request.rubrics
-            assert { rubrics[0] == Article.rubric }
-            assert { rubrics[1] == Article.rubric["most_popular"] }
+            resources = @request.resources
+            assert { resources[0] == Article.resource }
+            assert { resources[1] == Article.resource["most_popular"] }
             # perhaps Property type should be the type of the value, not the type of the object the property is on
-            assert { rubrics[1] == Property.new(Article, :name => "most_popular") }
+            assert { resources[1] == Property.new(Article, :name => "most_popular") }
           end
         end
 

@@ -1,5 +1,5 @@
 require 'siesta/application'
-require 'siesta/rubric'
+require 'siesta/resource'
 
 # 'include Siesta::Resourceful' if you want your class to support fun self-declarations
 module Siesta
@@ -30,31 +30,31 @@ module Siesta
           flags << :view
         end
 
-        @_rubric = (if flags.include? :collection
+        @_resource = (if flags.include? :collection
           Collection
         elsif flags.include? :view
           View
         else
-          Rubric
+          Resource
         end).new(self, options)
 
         ###
-		    Application.default << @_rubric
+		    Application.default << @_resource
         if flags.include? :root
           Siesta::Application.default.root = self
         end
       end
 
       def property(name, options = {})
-        rubric.property(name, options)
+        resource.property(name, options)
       end
 
-      def rubric
-        @_rubric
+      def resource
+        @_resource
       end
 
-      def rubric=(r)
-        @_rubric = r
+      def resource=(r)
+        @_resource = r
       end
 
       def path
@@ -68,8 +68,8 @@ module Siesta
       Application.build_path_for(self)
     end
 
-    def rubric
-      @rubric ||= self.class.rubric.member.materialize(:target => self)
+    def resource
+      @resource ||= self.class.resource.member.materialize(:target => self)
     end
 
   end

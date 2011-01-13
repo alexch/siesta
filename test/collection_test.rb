@@ -2,7 +2,7 @@ here = File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(here + "/..")
 require "test/test_helper"
 
-require "siesta/rubric"
+require "siesta/resource"
 require "siesta/resourceful"
 
 module Siesta
@@ -35,40 +35,40 @@ module Siesta
       end
 
       before do
-        @thing_rubric = Rubric.new(Thing)
+        @thing_resource = Resource.new(Thing)
       end
 
       describe Collection do
         before do
-          @collection_rubric = Collection.new(Thing)
+          @collection_resource = Collection.new(Thing)
         end
 
-        it "has a member rubric" do
-          assert { @collection_rubric.member.is_a? Member }
+        it "has a member resource" do
+          assert { @collection_resource.member.is_a? Member }
         end
 
-        it "s member rubric is the same as the collection's" do
-          assert { @collection_rubric.member.type == Thing }
+        it "s member resource is the same as the collection's" do
+          assert { @collection_resource.member.type == Thing }
         end
 
-        it "s member rubric has a target that's the same as the type" do
-          assert { @collection_rubric.member.target == Thing }
+        it "s member resource has a target that's the same as the type" do
+          assert { @collection_resource.member.target == Thing }
         end
 
         describe '[]' do
-          describe "when there's no matching rubric" do
+          describe "when there's no matching resource" do
             it "calls #find on the type" do
-              found = @collection_rubric["123"]
+              found = @collection_resource["123"]
               assert  { found }
               assert  { found.target }
               assert  { found.target.is_a? Thing }
               assert  { found.target.id == "123" }
             end
 
-            it "makes a pseudo-proxy to the collection's member rubric" do
+            it "makes a pseudo-proxy to the collection's member resource" do
               # How to reliably test this?
-              found = @collection_rubric["123"]
-              assert { found.parts == @collection_rubric.member.parts }
+              found = @collection_resource["123"]
+              assert { found.parts == @collection_resource.member.parts }
             end
           end
         end

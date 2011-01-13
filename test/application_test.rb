@@ -49,8 +49,8 @@ module Siesta
         end
       end
 
-      describe '#rubrics' do
-        it "has no rubrics by default" do
+      describe '#resources' do
+        it "has no resources by default" do
           assert { @application.parts.empty? }
         end
       end
@@ -62,7 +62,7 @@ module Siesta
 
         it "strips leading and trailing slashes" do
           assert { @application["/"] == Siesta::WelcomePage }
-          @application << Rubric.new(Dog)
+          @application << Resource.new(Dog)
           assert { @application["/dog"] == Dog }
           assert { @application["dog/"] == Dog }
           assert { @application["/dog/"] == Dog }
@@ -72,11 +72,11 @@ module Siesta
       describe "<<" do
         it "adds a resource, using its natural path" do
           @application << Dog
-          assert { @application["dog"] == Dog.rubric }
+          assert { @application["dog"] == Dog.resource }
         end
 
         it "gives an error about duplicate paths" do
-          @application << Rubric.new(Dog)
+          @application << Resource.new(Dog)
           e = rescuing do
             module Another
               class Dog
@@ -98,7 +98,7 @@ module Siesta
         end
       end
 
-      # todo: move this method to Rubric?
+      # todo: move this method to Resource?
       describe "#path_for" do
         describe "returns the REST path" do
           it "for a class" do

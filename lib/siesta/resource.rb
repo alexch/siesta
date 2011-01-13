@@ -1,19 +1,16 @@
-# todo: test
-# other possible names: holder, basket, caddy, shell, casing, skin, assistant, butler, marker, guide, descriptor, rubric
-# rubric - a statement of purpose or function
 
 module Siesta
-  class Rubric
+  class Resource
 
     module Handler
       def handle_get(request)
         self
       end
 
-      # todo: make other handle_ methods return an HTTP error of some sort
+      # todo: make other handle_ methods return an 405 MethodNotAllowed HTTP error
     end
 
-    attr_reader :type # the type (class) of object this rubric describes
+    attr_reader :type # the type (class) of object this resource describes
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
     attr_reader :parts
@@ -25,46 +22,46 @@ module Siesta
       @parts = []
     end
 
-    def <<(rubric)
-      if (rubric.is_a? String) || (rubric.is_a? Symbol)
-        rubric_name = rubric
-        rubric = Property.new(type, :name => rubric_name)
-      elsif !rubric.is_a? Rubric
-        if rubric.respond_to? :rubric
-          rubric = rubric.rubric  # todo: test
+    def <<(resource)
+      if (resource.is_a? String) || (resource.is_a? Symbol)
+        resource_name = resource
+        resource = Property.new(type, :name => resource_name)
+      elsif !resource.is_a? Resource
+        if resource.respond_to? :resource
+          resource = resource.resource  # todo: test
         else
           # todo: Test
-          raise ArgumentError, "Expected a Rubric or a Resourceful, but got #{rubric.inspect}"
+          raise ArgumentError, "Expected a Resource or a Resourceful, but got #{resource.inspect}"
         end
       end
 
-      if part_named(rubric.name)
-        raise ArgumentError, "Path /#{rubric.name} already mapped" unless part_named(rubric.name).equal?(rubric)
+      if part_named(resource.name)
+        raise ArgumentError, "Path /#{resource.name} already mapped" unless part_named(resource.name).equal?(resource)
       else
-        @parts << rubric
+        @parts << resource
       end
     end
 
-    def [](rubric_name)
-      rubric = part_named(rubric_name)
-      if rubric
-        # clone the chosen rubric
-        rubric = rubric.materialize(:parent_rubric => self)
+    def [](resource_name)
+      resource = part_named(resource_name)
+      if resource
+        # clone the chosen resource
+        resource = resource.materialize(:parent_resource => self)
       end
-      rubric
+      resource
     end
 
     def property(name, options = {})
       self << Property.new(type, :name => name)
     end
 
-    def part_named(rubric_name)
-      rubric_name = rubric_name.strip_slashes
-      parts.detect{|p| p.name == rubric_name}
+    def part_named(resource_name)
+      resource_name = resource_name.strip_slashes
+      parts.detect{|p| p.name == resource_name}
     end
 
     def ==(other)
-      other.is_a? Rubric and
+      other.is_a? Resource and
       @type == other.type and
       @name == other.name and
       @parts == other.parts

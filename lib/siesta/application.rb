@@ -2,12 +2,11 @@ require 'extlib/mash'
 
 require 'siesta/config'
 require 'siesta/request'
-require 'siesta/handler'
-require 'siesta/rubric'
+require 'siesta/resource'
 require 'siesta/log'
 
 module Siesta
-  class Application < Rubric
+  class Application < Resource
     include Log
 
     # The default application is a singleton, which contains all
@@ -41,7 +40,7 @@ module Siesta
       [status, headers, body]
     end
 
-    # todo: change root from a target to a rubric (descriptor)
+    # todo: change root from a target to a resource (descriptor)
     def root=(target)
       @target = target
     end

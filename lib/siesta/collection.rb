@@ -1,8 +1,8 @@
-require 'siesta/rubric'
+require 'siesta/resource'
 
 module Siesta
-  # A Rubric whose type is a collection (e.g. an ActiveRecord class)
-  class Collection < Rubric
+  # A Resource whose type is a collection (e.g. an ActiveRecord class)
+  class Collection < Resource
 
     module Handler
       # todo: test
@@ -25,15 +25,15 @@ module Siesta
       super
       type.send(:extend, Handler)
       widget = type.const_named(:New) # todo: scaffoldy default widget
-      self <<(Rubric.new widget, :target => type, :name => "new") # todo: unless options[:no_new]
+      self <<(Resource.new widget, :target => type, :name => "new") # todo: unless options[:no_new]
 
       @member = Member.new(type, options[:member])
     end
 
-    def [](rubric_name)
+    def [](resource_name)
       super or begin
         instance = begin
-          type.find rubric_name
+          type.find resource_name
         rescue ActiveRecord::RecordNotFound
           nil
         end

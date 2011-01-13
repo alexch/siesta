@@ -1,8 +1,8 @@
-require 'siesta/rubric'
+require 'siesta/resource'
 
 module Siesta
-  # A Rubric whose type is a member of a collection (e.g. an ActiveRecord instance)
-  class Member < Rubric
+  # A Resource whose type is a member of a collection (e.g. an ActiveRecord instance)
+  class Member < Resource
 
     module Handler
 
@@ -23,7 +23,7 @@ module Siesta
         # todo: error handling
         # todo: status message
         destroy
-        collection = request.rubrics[-2]  # todo: test
+        collection = request.resources[-2]  # todo: test
         request.response.redirect collection.path
       end
 
@@ -35,7 +35,7 @@ module Siesta
       super
       type.send(:include, Handler)
       widget = type.const_named(:Edit) # todo: scaffoldy default
-      self <<(Rubric.new widget, :name => "edit") # todo: unless options[:no_edit]
+      self <<(Resource.new widget, :name => "edit") # todo: unless options[:no_edit]
     end
 
     def path

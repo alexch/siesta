@@ -10,7 +10,7 @@ module Siesta
     end
   end
 
-  class View < Rubric
+  class View < Resource
     def initialize(type, options = {})
       super
       type.send(:extend, Handler)

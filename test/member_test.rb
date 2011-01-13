@@ -2,7 +2,7 @@ here = File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(here + "/..")
 require "test/test_helper"
 
-require "siesta/rubric"
+require "siesta/resource"
 require "siesta/resourceful"
 
 module Siesta
@@ -35,22 +35,22 @@ module Siesta
       end
 
       before do
-        @thing_rubric = Rubric.new(Thing)
+        @thing_resource = Resource.new(Thing)
       end
 
       describe Member do
         describe 'name' do
           it "is :id" do
-            @collection_rubric = Collection.new(Thing)
-            thing_rubric = @collection_rubric["123"]
-            assert { thing_rubric.name == "123" }
+            @collection_resource = Collection.new(Thing)
+            thing_resource = @collection_resource["123"]
+            assert { thing_resource.name == "123" }
           end
         end
 
         describe 'with_member' do
           it "creates a new instance with pointers to the old instance's data" do
-            @collection_rubric = Collection.new(Thing)
-            master = @collection_rubric.member
+            @collection_resource = Collection.new(Thing)
+            master = @collection_resource.member
             assert { master.type == Thing }
             thing = Thing.new(1)
             proxy = master.with_target(thing)

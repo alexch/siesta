@@ -1,5 +1,5 @@
 
-Make Application be a Rubric and unify Rubric handling
+Make Application be a Resource and unify Resource handling
 
 * "new" and "edit" as subresources
 ** POST /foo/new -> POST /foo
