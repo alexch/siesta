@@ -6,7 +6,7 @@ require "siesta/view/generic"
 
 module Siesta
   class Request < Rack::Request
-    attr_accessor :resource, :application, :response
+    attr_accessor :target, :application, :response
 
     def initialize(env, application)
       super(env)
@@ -55,19 +55,14 @@ module Siesta
       rubrics
     end
 
-    def resources
+    def targets
       rubrics.map do |rubric|
-        if rubric.respond_to?(:target)
-          rubric.target
-        elsif rubric.respond_to?(:type)
-          rubric.type
-        else
-          nil
-        end
+        rubric.target or
+        rubric.type
       end.compact
     end
 
-    # A request context determines the response format, and may be used to determine which handler is chosen for a given request/resource.
+    # A request context determines the response format, and may be used to determine which handler is chosen for a given request/target.
     # It is usually 'json' or 'html' but could in theory be something else like 'api' or 'mobile' or 'iphone' or 'admin' depending on how an application is congfigured. I'd like to split the concept of response media format from the semantic context of why you're returning that format.
     # todo: test
     def context
@@ -88,9 +83,9 @@ module Siesta
     end
 
     def handle
-      self.resource = resources.last
-      raise NotFound, path if resource.nil?
-      result = resource.send "handle_#{verb}", self
+      self.target = targets.last
+      raise NotFound, path if target.nil?
+      result = target.send "handle_#{verb}", self
       # todo: catch exceptions here and turn them into HTTP errors
       # todo: if redirect, use a standard view
       render result
@@ -121,13 +116,13 @@ module Siesta
       h = if result.is_a? Erector::Widget
         result.to_html
       elsif result.is_a? Class and result.ancestors.include? Erector::Widget
-        result.new({:object => resource}).to_html
+        result.new({:object => target}).to_html
       elsif result.is_a? String
         result
       elsif result.is_a? Hash
-        view(result).new({:object => resource} << result).to_html
+        view(result).new({:object => target} << result).to_html
       else
-        view(result).new({:object => resource, :value => result}).to_html
+        view(result).new({:object => target, :value => result}).to_html
       end
       h
     end
@@ -144,8 +139,8 @@ module Siesta
     end
 
     def view(result)
-      Kernel.const_named resource.class.name + 'Page' or
-      Kernel.const_named resource.class.name + 'View' or
+      Kernel.const_named target.class.name + 'Page' or
+      Kernel.const_named target.class.name + 'View' or
       GenericView
     end
 

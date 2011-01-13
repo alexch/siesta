@@ -66,7 +66,7 @@ module Siesta
         end
       end
 
-      describe '#resources' do
+      describe '#targets' do
 
         before do
           @application << Article.rubric
@@ -74,31 +74,31 @@ module Siesta
 
         it "finds the root resource" do
           @request.path_info = "/"
-          assert { @request.resources == [@application.root] }
+          assert { @request.targets == [@application.root] }
         end
 
         it "finds the resource corresponding to a single rubric" do
           @request.path_info = "/article"
-          assert { @request.resources == [Article] }
+          assert { @request.targets == [Article] }
         end
 
-        it "finds the resources corresponding to the path rubrics" do
+        it "finds the targets corresponding to the path rubrics" do
           @request.path_info = "/article/123"
-          resources = @request.resources
-          assert { resources == [Article, Article.new(123)] }
+          targets = @request.targets
+          assert { targets == [Article, Article.new(123)] }
         end
 
         describe "for a collection" do
           it "locates the contained item" do
             @request.path_info = "/article/123"
-            resources = @request.resources
-            assert { resources == [Article, Article.new(123)] }
+            targets = @request.targets
+            assert { targets == [Article, Article.new(123)] }
           end
 
           it "raises a NotFound error" do
             @request.path_info = "/article/100"
             e = rescuing do
-              @request.resources
+              @request.targets
             end
             assert { e.is_a? Siesta::NotFound }
             assert { e.path == "/article/100" }
@@ -106,8 +106,8 @@ module Siesta
 
           it "returns the named rubric" do
             @request.path_info = "/article/most_popular"
-            resources = @request.resources
-            assert { resources == [Article, Article.new(99)] }
+            targets = @request.targets
+            assert { targets == [Article, Article.new(99)] }
           end
         end
 

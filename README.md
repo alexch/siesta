@@ -55,7 +55,9 @@ Definitions:
 
 **action** A part that alters the parent resource, e.g. "/user/12/suspend". (Be sure you really want to do this instead of "POST /user/12/suspension" since the latter is more powerful in the REST paradigm -- it cleanly supports DELETE, properties, etc.)
 
-**type** The particular object (or class) a request is referring to.
+**type** The type (class) of object a resource is referring to.
+
+**target** The instance of an object a resource is referring to; in the case of collections, the collection's target is a class, but the member's target is an instance.
 
 
 See http://tools.ietf.org/html/rfc5023 and http://en.wikipedia.org/wiki/Representational_State_Transfer#RESTful_web_services for related terminology.
@@ -65,12 +67,12 @@ TODO: Re-read the REST paper to see if he's got better names already.
 Examples:
 
 /foo --
-    "foo" is a unitary resource since it's at root level
+    "foo" is a unique resource since it's at root level
 
 /dog/123/name --
     "dog" is unitary since it represents the set of all dogs (many dogs, but only one set).
     "name" is a subresource since there's only one name per dog.
-    "dog/123" is an indexed resource
+    "dog/123" is a member resource
 
 All names are singular. (For collections, we may want to optionally allow plurals to work as well as the singular form.)
 

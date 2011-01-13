@@ -41,8 +41,9 @@ module Siesta
       [status, headers, body]
     end
 
-    def root=(resource)
-      @target = resource
+    # todo: change root from a target to a rubric (descriptor)
+    def root=(target)
+      @target = target
     end
 
     def root
@@ -53,27 +54,27 @@ module Siesta
       other.is_a? Application and super
     end
 
-    def self.path_for(resource)
-      if resource.respond_to? :path
-        resource.path
+    def self.path_for(target)
+      if target.respond_to? :path
+        target.path
       else
-        build_path_for(resource)
+        build_path_for(target)
       end
     end
 
-    def self.build_path_for(resource)
-      if resource.is_a? Class
-        "/#{resource.name.split('::').last.underscore}"
-      elsif resource.respond_to? :id
-        "#{path_for(resource.class)}/#{resource.id}"
+    def self.build_path_for(target)
+      if target.is_a? Class
+        "/#{target.name.split('::').last.underscore}"
+      elsif target.respond_to? :id
+        "#{path_for(target.class)}/#{target.id}"
       else
-        "#{path_for(resource.class)}/#{resource.object_id}"
+        "#{path_for(target.class)}/#{target.object_id}"
       end
     end
 
     # todo: Is there a cleaner way to proxy this? Maybe use Forwardable.
-    def path_for(resource)
-      Application.path_for(resource)
+    def path_for(target)
+      Application.path_for(target)
     end
 
   end

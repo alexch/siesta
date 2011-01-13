@@ -15,7 +15,7 @@ module Siesta
         # todo: error handling
         # todo: status message
         update(request.params)
-        request.response.redirect resource.path
+        request.response.redirect request.target.path
       end
 
       def handle_delete(request)

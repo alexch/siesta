@@ -9,9 +9,11 @@ module Siesta
       def handle_get(request)
         self
       end
+
+      # todo: make other handle_ methods return an HTTP error of some sort
     end
 
-    attr_reader :type # the type (class) of resource this rubric describes
+    attr_reader :type # the type (class) of object this rubric describes
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
     attr_reader :parts
