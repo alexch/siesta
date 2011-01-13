@@ -19,6 +19,6 @@ WebClient.new do
   assert {doc.css(".main .name").text == "Dogs"}
   assert {doc.css(".main .body").text == "Dogs have #{legs} legs."}
 
-  # get "#{path}/edit"
-
+  get "#{path}/edit"
+  d { html }
 end

@@ -4,6 +4,14 @@ module Siesta
   # A Rubric whose type is a member of a collection (e.g. an ActiveRecord instance)
   class Member < Rubric
 
+    def initialize(type, options = {})
+      options ||= {}
+      super
+      type.send(:include, Siesta::Handler::Member)
+      widget = type.const_named(:Edit) # todo: scaffoldy default
+      self <<(Rubric.new widget, :name => "edit") # todo: unless options[:no_edit]
+    end
+
     def path
       "#{type.path}/#{name}"
     end

@@ -54,6 +54,8 @@ module Siesta
             assert { A.rubric.type == A }
           end
 
+          # todo: make these be tests of Collection
+
           it "makes the type's class a collection handler" do
             assert { A.is_a? Siesta::Handler::Collection }
           end
