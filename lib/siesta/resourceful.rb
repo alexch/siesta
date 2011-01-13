@@ -30,21 +30,13 @@ module Siesta
           flags << :view
         end
 
-        @_rubric = if flags.include? :collection
-          Collection.new(self, options)
+        @_rubric = (if flags.include? :collection
+          Collection
+        elsif flags.include? :view
+          View
         else
-          Rubric.new(self, options)
-        end
-
-        if flags.include? :view
-          extend Siesta::Handler::Widget
-        elsif flags.include? :collection
-          extend Siesta::Handler::Collection
-          include Siesta::Handler::Member
-        else
-          extend Siesta::Handler::Generic
-          include Siesta::Handler::Generic # ???
-        end
+          Rubric
+        end).new(self, options)
 
         ###
 		    Application.default << @_rubric

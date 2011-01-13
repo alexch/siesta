@@ -57,11 +57,11 @@ module Siesta
           # todo: make these be tests of Collection
 
           it "makes the type's class a collection handler" do
-            assert { A.is_a? Siesta::Handler::Collection }
+            assert { A.is_a? Siesta::Collection::Handler }
           end
 
           it "makes the type's instance a member handler" do
-            assert { A.new.is_a? Siesta::Handler::Member }
+            assert { A.new.is_a? Siesta::Member::Handler }
           end
 
           it "gives the type's instance a rubric" do

@@ -37,6 +37,7 @@ module Siesta
       before do
         @thing_rubric = Rubric.new(Thing)
       end
+
       describe Member do
         describe 'name' do
           it "is :id" do

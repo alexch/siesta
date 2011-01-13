@@ -5,6 +5,12 @@
 module Siesta
   class Rubric
 
+    module Handler
+      def handle_get(request)
+        self
+      end
+    end
+
     attr_reader :type # the type (class) of resource this rubric describes
     attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
@@ -85,7 +91,8 @@ module Siesta
 
 end
 
-
+# now that the base class is defined, define all the specific subclasses
 require 'siesta/property'
 require 'siesta/collection'
 require 'siesta/member'
+require 'siesta/view'

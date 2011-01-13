@@ -146,7 +146,7 @@ module Siesta
     def view(result)
       Kernel.const_named resource.class.name + 'Page' or
       Kernel.const_named resource.class.name + 'View' or
-      View::Generic
+      GenericView
     end
 
   end
