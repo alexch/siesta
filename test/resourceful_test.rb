@@ -145,9 +145,10 @@ module Siesta
 
             it "declares resource subresources by name" do
               class Greyhound < Dog
-                resourceful
-                property "color"
-                property "size"
+                resourceful do
+                  property "color"
+                  property "size"
+                end
               end
               assert do
                 Greyhound.resource.parts == [
@@ -167,9 +168,10 @@ module Siesta
 
             it "declares resource subresources for items inside collections" do
               class Whippet < Dog
-                resourceful :collection
-                property "reverse" # this is a property of the Whippet collection
-                resource.member.property "speed" # this is a property of each whippet item (instance)
+                resourceful :collection do
+                  property "reverse" # this is a property of the Whippet collection
+                  member.property "speed" # this is a property of each whippet item (instance)
+                end
               end
               assert do
                  Whippet.resource.parts.include? Property.new(Whippet, :name => "reverse")

@@ -48,9 +48,10 @@ module Siesta
 
       class Article < Struct.new(:id)
         include Siesta::Resourceful
-        resourceful :collection
-        property "most_popular"
-        resource.member.property "title"
+        resourceful :collection do
+          property "most_popular"
+          member.property "title"
+        end
 
         def self.find(id)
           id = id.to_i

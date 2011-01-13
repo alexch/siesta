@@ -14,7 +14,7 @@ module Siesta
     end
 
     module ClassMethods
-      def resourceful(*args)
+      def resourceful(*args, &block)
         options = if args.last.is_a? Hash
           args.pop
         else
@@ -38,15 +38,15 @@ module Siesta
           Resource
         end).new(self, options)
 
-        ###
 		    Application.default << @_resource
         if flags.include? :root
           Siesta::Application.default.root = self
         end
-      end
 
-      def property(name, options = {})
-        resource.property(name, options)
+        if block
+          resource.instance_eval(&block)
+        end
+
       end
 
       def resource
