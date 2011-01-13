@@ -9,10 +9,12 @@ module Siesta
       super
       type.send(:extend, Siesta::Handler::Collection)
       type.send(:include, Siesta::Handler::Member)
-      self <<(Rubric.new type, :name => "new") # todo: unless options[:no_new]
+      widget = type.const_named(:New) # todo: scaffoldy default widget
+      self <<(Rubric.new widget, :target => type, :name => "new") # todo: unless options[:no_new]
 
       @member = Member.new(type)
-      @member <<(Rubric.new type, :name => "edit") # todo: unless options[:no_edit]
+      widget = type.const_named(:Edit) # todo: scaffoldy default
+      @member <<(Rubric.new widget, :name => "edit") # todo: unless options[:no_edit]
     end
 
     def [](rubric_name)

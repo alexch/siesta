@@ -22,6 +22,10 @@ module Siesta
       @instance = application
     end
 
+    def self.reset
+      @instance = nil
+    end
+
     def initialize
       super(nil, :name => "", :target => nil)
       require 'siesta/welcome_page'

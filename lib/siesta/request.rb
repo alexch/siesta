@@ -144,16 +144,9 @@ module Siesta
     end
 
     def view(result)
-      constant_named resource.class.name + 'Page' or
-      constant_named resource.class.name + 'View' or
+      Kernel.const_named resource.class.name + 'Page' or
+      Kernel.const_named resource.class.name + 'View' or
       View::Generic
-    end
-
-    # todo: move to ext?
-    def constant_named(name)
-      Kernel.const_get(name)
-    rescue NameError
-      nil
     end
 
   end

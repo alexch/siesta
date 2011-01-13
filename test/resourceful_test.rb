@@ -19,6 +19,76 @@ module Siesta
         Siesta::Application.default
       end
 
+      describe "#build" do
+        before do
+          Application.reset
+          Siesta::ResourcefulTest.send(:remove_const, :A) if Siesta::ResourcefulTest.const_defined?(:A)
+          class A
+            class New < Erector::Widget
+            end
+            class Edit < Erector::Widget
+            end
+          end
+        end
+
+        it "makes its parameter Resourceful" do
+          Resourceful.build(A)
+          assert { A.ancestors.include? Siesta::Resourceful }
+        end
+
+        it "gives its parameter a rubric" do
+          Resourceful.build(A)
+          assert { A.rubric }
+          assert { A.rubric.is_a? Rubric }
+          assert { A.rubric.type == A }
+        end
+
+        describe "with the :collection flag" do
+          before do
+            Resourceful.build(A, :collection)
+          end
+
+          it "makes a collection rubric" do
+            assert { A.rubric }
+            assert { A.rubric.is_a? Collection }
+            assert { A.rubric.type == A }
+          end
+
+          it "makes the type's class a collection handler" do
+            assert { A.is_a? Siesta::Handler::Collection }
+          end
+
+          it "makes the type's instance a member handler" do
+            assert { A.new.is_a? Siesta::Handler::Member }
+          end
+
+          it "gives the type's instance a rubric" do
+            a = A.new
+            rubric = a.rubric
+            assert { rubric }
+            assert { rubric.type == A }
+            assert { rubric.target == a }
+          end
+
+          it "gives the type's class a 'new' part" do
+            rubric = A.rubric.part_named("new")
+            deny { rubric.nil? }
+            assert { rubric.type == A::New }
+            assert { rubric.target == A }
+          end
+
+          it "gives the type's instance an 'edit' part" do
+            a = A.new
+            rubric = a.rubric.part_named("edit")
+            deny { rubric.nil? }
+            assert { rubric.type == A::Edit }
+          end
+
+        end
+
+      end
+
+
       describe "when included in a base class" do
         before do
           class Dog

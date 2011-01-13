@@ -1,5 +1,14 @@
 require 'wrong/d'
 
+class Module
+  # todo: test
+  def const_named(name)
+    if const_defined?(name)
+      const_get(name)
+    end
+  end
+end
+
 class Object
   include Wrong::D
 end

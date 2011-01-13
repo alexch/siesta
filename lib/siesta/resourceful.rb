@@ -8,13 +8,19 @@ module Siesta
       in_class.send(:extend, ClassMethods)
     end
 
+    def self.build(type, *args)
+      type.send(:include, Resourceful)
+      type.resourceful(*args)
+    end
+
     module ClassMethods
-      def resourceful(*flags)
-        options = if flags.last.is_a? Hash
-          flags.pop
+      def resourceful(*args)
+        options = if args.last.is_a? Hash
+          args.pop
         else
           {}
         end
+        flags = args
 
         if defined? ActiveRecord and ancestors.include?(ActiveRecord::Base) # todo: ActiveModel
           flags << :collection
@@ -40,6 +46,7 @@ module Siesta
           include Siesta::Handler::Generic # ???
         end
 
+        ###
 		    Application.default << @_rubric
         if flags.include? :root
           Siesta::Application.default.root = self
