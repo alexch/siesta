@@ -10,31 +10,51 @@ module Siesta
       # todo: make other handle_ methods return an 405 MethodNotAllowed HTTP error
     end
 
+    class LifecycleException < Exception
+    end
+
     attr_reader :type # the type (class) of object this resource describes
-    attr_reader :target # the instance (or class) of the appropriate type. Often the same as type, but not always, so be careful which one you mean.
     attr_reader :name
     attr_reader :parts
 
     def initialize(type, options = {})
       @type = type
       @name = options[:name] || type.name.split('::').last.underscore
-      @target = options[:target] || type # todo: test
+      @aspect = true if options[:aspect]
       @parts = []
     end
 
-    def <<(resource)
-      if (resource.is_a? String) || (resource.is_a? Symbol)
-        resource_name = resource
-        resource = Property.new(type, :name => resource_name)
-      elsif !resource.is_a? Resource
-        if resource.respond_to? :resource
-          resource = resource.resource  # todo: test
+    # the instance (or class) of the appropriate type. Only available on materialized resources.
+    def target
+      @target or raise LifecycleException.new("can't call target until you materialize the resource")
+    end
+
+    # the instance (or class) of the appropriate type. Only available on materialized resources.
+    def parent
+      @parent or raise LifecycleException.new("can't call parent until you materialize the resource")
+    end
+
+    def aspect?
+      @aspect
+    end
+
+    def <<(part)
+      if (part.is_a? String) || (part.is_a? Symbol)
+        part_name = part
+        part = Property.new(type, :name => part_name)
+      elsif !part.is_a? Resource
+        if part.respond_to? :resource
+          part = part.resource  # todo: test
         else
           # todo: Test
-          raise ArgumentError, "Expected a Resource or a Resourceful, but got #{resource.inspect}"
+          raise ArgumentError, "Expected a Resource or a Resourceful or a Property name, but got #{part.inspect}"
         end
       end
 
+      add_part(part)
+    end
+
+    def add_part(resource)
       if part_named(resource.name)
         raise ArgumentError, "Path /#{resource.name} already mapped" unless part_named(resource.name).equal?(resource)
       else
@@ -43,12 +63,11 @@ module Siesta
     end
 
     def [](resource_name)
-      resource = part_named(resource_name)
-      if resource
+      part = part_named(resource_name)
+      if part
         # clone the chosen resource
-        resource = resource.materialize(:parent_resource => self)
+        part.materialize(part.type, self) # why part.type?
       end
-      resource
     end
 
     def property(name, options = {})
@@ -71,20 +90,21 @@ module Siesta
       name
     end
 
-    # todo: inline?
-    def with_target(target)
-      materialize(:target => target)
+    # to materialize a resource is to attach it to an instance, rather than a type.
+    # This method makes a duplicate
+    def materialize(target, parent)
+      clone = dup
+      clone.on_materialization(target, parent)
+      clone
     end
 
-    def materialize(options = {})
-      proxy = dup
-      proxy.materialized(options)
-      proxy
+    def materialized?
+      @target
     end
 
-    def materialized(options = {})
-      @target = options[:target] if options[:target]
-      @name = options[:name] if options[:name]
+    def on_materialization(target, parent)
+      @target = aspect? ? parent.target : target
+      @parent = parent
     end
   end
 

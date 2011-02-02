@@ -53,7 +53,7 @@ module Siesta
             master = @collection_resource.member
             assert { master.type == Thing }
             thing = Thing.new(1)
-            proxy = master.with_target(thing)
+            proxy = master.materialize(thing, nil)
             assert { proxy.target == thing }
             assert { proxy.type == Thing }
             assert { proxy.name == 1 }

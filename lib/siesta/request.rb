@@ -8,7 +8,7 @@ module Siesta
 
   # I could call this a "communication" and then more cleanly encapsulate the Rack::Request, and remove the weird feeling when you say "request.response", but for now I like not having to proxy useful request methods like "params".
   class Request < Rack::Request
-    attr_accessor :target, :application, :response
+    attr_accessor :resource, :target, :application, :response
 
     def initialize(env, application)
       super(env)
@@ -43,25 +43,23 @@ module Siesta
 
     def resources
       bits = path_bits
-      return [application.root.resource] if bits.empty?
+      return [application.root.resource.materialize(application.root, nil)] if bits.empty?
 
       resources = []
       current_resource = application
+      processed = ""
       until bits.empty?
         bit = bits.shift
+        processed << "/#{bit}"
         next_resource = current_resource[bit]
-        raise NotFound, "/" + (resources.map(&:name) << bit).join("/") if next_resource.nil?
+        raise NotFound, processed if next_resource.nil?
         resources << next_resource
         current_resource = next_resource
       end
+      # resources.each do |r|
+      #   d{r}
+      # end
       resources
-    end
-
-    def targets
-      resources.map do |resource|
-        resource.target or
-        resource.type
-      end.compact
     end
 
     # A request context determines the response format, and may be used to determine which handler is chosen for a given request/target.
@@ -85,7 +83,8 @@ module Siesta
     end
 
     def handle
-      self.target = targets.last
+      @resource = resources.last
+      @target = @resource.target
       raise NotFound, path if target.nil?
       result = target.send "handle_#{verb}", self
       # todo: catch exceptions here and turn them into HTTP errors
@@ -115,18 +114,18 @@ module Siesta
     end
 
     def html(result)
-      h = if result.is_a? Erector::Widget
+      html = if result.is_a? Erector::Widget
         result.to_html
       elsif result.is_a? Class and result.ancestors.include? Erector::Widget
-        result.new({:object => target}).to_html
+        result.new({:target => target}).to_html
       elsif result.is_a? String
         result
       elsif result.is_a? Hash
-        view(result).new({:object => target} << result).to_html
+        view(result).new({:target => target} << result).to_html
       else
-        view(result).new({:object => target, :value => result}).to_html
+        view(result).new({:target => result}).to_html
       end
-      h
+      html
     end
 
     def json(result)
@@ -141,7 +140,9 @@ module Siesta
     end
 
     def view(result)
+      target.class.const_named(:Page) or
       Kernel.const_named target.class.name + 'Page' or
+      target.class.const_named(:View) or
       Kernel.const_named target.class.name + 'View' or
       GenericView
     end

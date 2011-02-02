@@ -69,7 +69,7 @@ module Siesta
     end
 
     def resource
-      @resource ||= self.class.resource.member.materialize(:target => self)
+      @resource ||= self.class.resource.member.materialize(self, self.class.resource)
     end
 
   end

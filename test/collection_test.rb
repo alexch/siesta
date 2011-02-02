@@ -51,10 +51,6 @@ module Siesta
           assert { @collection_resource.member.type == Thing }
         end
 
-        it "s member resource has a target that's the same as the type" do
-          assert { @collection_resource.member.target == Thing }
-        end
-
         describe '[]' do
           describe "when there's no matching resource" do
             it "calls #find on the type" do

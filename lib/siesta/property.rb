@@ -5,9 +5,9 @@ module Siesta
     # todo: allow a resource named "foo" to call a method named "bar"
 
     # todo: test
-    def materialized(options)
+    def on_materialization(target, parent)
       super
-      value = options[:parent_resource].target.send self.name
+      value = parent.target.send self.name
       @target = value
     end
   end

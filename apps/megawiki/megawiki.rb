@@ -11,9 +11,46 @@ require "#{here}/../db"
 
 ########## Megawiki Domain
 
+# /article [GET, POST]
+# /article/new [GET]
+# /article/1 [GET, PUT, DELETE]
+# /article/1/edit [GET]
+#
 class Article < ActiveRecord::Base
   include Siesta::Resourceful
-  resourceful :group
+
+  class Edit < Erector::Widget
+    def content
+      h1 "Edit Article"
+      table do
+        tr do
+          th { text "id" }
+          td { text @target.id }
+        end
+        tr do
+          th { text "name" }
+          td { text @target.name }
+        end
+        tr do
+          th { text "body" }
+          td { text @target.body }
+        end
+      end
+    end
+  end
+
+  class New < Erector::Widget
+    def content
+      h1 "New Article"
+      table do
+        tr do
+        end
+      end
+    end
+  end
+
+  resourceful :collection  # todo: lazy initialization of edit and new widget resources
+
 end
 
 ########## Megawiki Views
@@ -111,16 +148,16 @@ end
 
 ###########################################################################
 
-class ArticlePage < MegawikiPage
-  needs :object, :value
+class Article::Page < MegawikiPage
+  needs :target
 
   def page_title
-    "Megawiki: #{@object.name}"
+    "Megawiki: #{@target.name}"
   end
 
   def main
-    h1 @object.name, :class => "name"
-    p @object.body, :class => "body"
+    h1 @target.name, :class => "name"
+    p @target.body, :class => "body"
   end
 end
 

@@ -25,20 +25,21 @@ module Siesta
       super
       type.send(:extend, Handler)
       widget = type.const_named(:New) # todo: scaffoldy default widget
-      self <<(Resource.new widget, :target => type, :name => "new") # todo: unless options[:no_new]
+      self <<(View.new widget, :aspect => true, :name => "new") # todo: unless options[:no_new]
 
       @member = Member.new(type, options[:member])
     end
 
     def [](resource_name)
-      super or begin
+      part = super
+      part or begin
         instance = begin
           type.find resource_name
         rescue ActiveRecord::RecordNotFound
           nil
         end
         return nil if instance.nil?
-        member.with_target(instance)
+        member.materialize(instance, self)
       end
     end
   end

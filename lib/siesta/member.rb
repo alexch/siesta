@@ -26,16 +26,19 @@ module Siesta
         collection = request.resources[-2]  # todo: test
         request.response.redirect collection.path
       end
-
     end
-
 
     def initialize(type, options = {})
       options ||= {}
       super
       type.send(:include, Handler)
       widget = type.const_named(:Edit) # todo: scaffoldy default
-      self <<(Resource.new widget, :name => "edit") # todo: unless options[:no_edit]
+      if widget
+        self <<(View.new widget, :name => "edit", :aspect => true) # todo: unless options[:no_edit]
+      else
+        # (raise "can't find #{type}::Edit")  # todo: 404?
+        nil
+      end
     end
 
     def path
@@ -55,10 +58,9 @@ module Siesta
       @name = target_id
     end
 
-    def with_target(target)
-      proxy = super
-      proxy.rename
-      proxy
+    def on_materialization(target, parent)
+      super
+      rename
     end
   end
 end

@@ -76,7 +76,7 @@ module Siesta
             resource = A.resource.part_named("new")
             deny { resource.nil? }
             assert { resource.type == A::New }
-            assert { resource.target == A }
+            deny { resource.materialized? }
           end
 
           it "gives the type's instance an 'edit' part" do
@@ -84,6 +84,7 @@ module Siesta
             resource = a.resource.part_named("edit")
             deny { resource.nil? }
             assert { resource.type == A::Edit }
+            deny { resource.materialized? }
           end
 
         end
